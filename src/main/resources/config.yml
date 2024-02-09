@@ -5,50 +5,36 @@
 ######################################
 
 mysql:
-  host: localhost
-  port: 3306
-  name: skyrama
-  user: root
-  password:
+    host: localhost
+    port: 3306
+    name: skyrama
+    user: root
+    password:
 
 # General plugin settings
 general:
+    # Language of the plugin (location: './locales/en_US.yml')
+    # Avaible: en_US , de_DE
+    locale: en_US
 
-  # Language of the plugin (location: './locales/en_US.yml')
-  # Avaible: en_US , de_DE
-  locale: en_US
-
-  # Name of the world where floating islands spawn
-  world: world
+    # Name of the world where floating islands spawn
+    world: world
 
 # Island related settings
 island:
+    # The size of the plot and the distance between islands
+    plotsize: 128
 
-  # Name of the default island schematic in folder ./schematics/******.schematic
-  schematic: island
-
-  # Distance between each islands in blocks
-  # DON'T CHANGE THIS VALUE IN MID GAME /!\
-  distance: 256
-
-  # Different island extension size in blocks (island width)
-  # DON'T CHANGE THIS VALUE IN MID GAME /!\
-  extensionLevel:
+    # Different island extension size in blocks (island width)
+    # DON'T CHANGE THIS VALUE IN MID GAME /!\
+    extensionLevel:
     0: 65
     1: 129
     2: 257
     3: 513
 
-  # Use the plugin pvp protection
-  # Set it to false if you have another plugin managing that
-  pvpEnabled: true
+    # Enable spawn on island when login
+    spawnIslandLogin: true
 
-  # Use the plugin block building, breaking and interaction protection
-  # Set it to false if you have another plugin managing that
-  buildEnabled: true
-
-  # Enable spawn on island when login
-  spawnIslandLogin: true
-
-  # Enable respawn on island when player die
-  respawnIsland: true
+    # Enable respawn on island when player die
+    respawnIsland: true

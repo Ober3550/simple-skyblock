@@ -8,34 +8,87 @@ import org.bukkit.entity.Player;
 
 public class GridManager {
 
-    public GridManager() { this.initialise(); }
+    public GridManager() {
+        this.initialise();
+    }
 
     public void initialise() {}
 
     public Location getCenterFromId(int id) {
+        int plotsize = Integer.parseInt(
+            Skyrama
+                .getPlugin(Skyrama.class)
+                .getConfig()
+                .getString("island.plotsize")
+        );
+        int x = 0;
+        int z = 0;
+        int state = 0;
+        int turnSteps = 1;
+        int turnCounter = 0;
+        for (int step = 0; step < id; step++) {
+            switch (state) {
+                case 0:
+                    x += plotsize;
+                    break;
+                case 1:
+                    z -= plotsize;
+                    break;
+                case 2:
+                    x -= plotsize;
+                    break;
+                case 3:
+                    z += plotsize;
+                    break;
+            }
 
-        int x = (id*769);
-        int z = (int) (Math.floor(x / 384500)*769);
+            if (step % turnSteps == 0) {
+                state = (state + 1) % 4;
+                turnCounter++;
+                if (turnCounter % 2 == 0) {
+                    turnSteps++;
+                }
+            }
+        }
 
-        return new Location(Bukkit.getWorld("world"), x, 100, z);
-
+        return new Location(Bukkit.getWorld("world"), x, 0, z);
     }
 
     public int isInPlayerIsland(Player player, Location location) {
-
-        if(location.getWorld() == Bukkit.getWorld(Skyrama.getPlugin(Skyrama.class).getConfig().getString("general.world"))) {
-            if(Skyrama.getIslandManager().getPlayerIsland(player) != null) {
-                Island island = Skyrama.getIslandManager().getPlayerIsland(player);
+        if (
+            location.getWorld() ==
+            Bukkit.getWorld(
+                Skyrama
+                    .getPlugin(Skyrama.class)
+                    .getConfig()
+                    .getString("general.world")
+            )
+        ) {
+            if (Skyrama.getIslandManager().getPlayerIsland(player) != null) {
+                Island island = Skyrama
+                    .getIslandManager()
+                    .getPlayerIsland(player);
                 Location center = getCenterFromId(island.getId());
+                int plotsize = Integer.parseInt(
+                    Skyrama
+                        .getPlugin(Skyrama.class)
+                        .getConfig()
+                        .getString("island.plotsize")
+                );
 
-                int minX = center.getBlockX() - 256;
-                int maxX = center.getBlockX() + 256;
+                int minX = center.getBlockX() - plotsize;
+                int maxX = center.getBlockX() + plotsize;
 
-                int minZ = center.getBlockZ() - 256;
-                int maxZ = center.getBlockZ() + 256;
+                int minZ = center.getBlockZ() - plotsize;
+                int maxZ = center.getBlockZ() + plotsize;
 
-                if (location.getBlockX() >= minX && location.getBlockX() <= maxX) {
-                    if(location.getBlockZ() >= minZ && location.getBlockZ() <= maxZ) {
+                if (
+                    location.getBlockX() >= minX && location.getBlockX() <= maxX
+                ) {
+                    if (
+                        location.getBlockZ() >= minZ &&
+                        location.getBlockZ() <= maxZ
+                    ) {
                         return 2;
                     }
                 }
@@ -44,8 +97,5 @@ public class GridManager {
             return 1;
         }
         return 0;
-
-
     }
-
 }

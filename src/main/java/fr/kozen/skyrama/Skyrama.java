@@ -19,12 +19,10 @@ public final class Skyrama extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
         this.initConfig();
         this.initObjects();
         this.initEvents();
         this.initCommands();
-
     }
 
     @Override
@@ -33,7 +31,6 @@ public final class Skyrama extends JavaPlugin {
     }
 
     public void initConfig() {
-
         // Load default config
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
@@ -41,17 +38,13 @@ public final class Skyrama extends JavaPlugin {
         saveResource("locales/en_US.yml", false);
         saveResource("locales/de_DE.yml", false);
         saveResource("schematics/island.schem", false);
-
     }
 
     public void initCommands() {
-
         getCommand("island").setExecutor(new CommandManager());
-
     }
 
     public void initObjects() {
-
         gridManager = new GridManager();
         sqlManager = new SqlManager();
         islandManager = new IslandManager();
@@ -60,54 +53,54 @@ public final class Skyrama extends JavaPlugin {
 
         sqlManager.populate();
         islandManager.loadIslands();
-
     }
 
     public void initEvents() {
-
-        if(getConfig().getBoolean("island.buildProtection", true)){
-            getServer().getPluginManager().registerEvents(new OnBlockBreak(), this);
-            getServer().getPluginManager().registerEvents(new OnBlockPlace(), this);
-            getServer().getPluginManager().registerEvents(new OnBlockClick(), this);
+        if (getConfig().getBoolean("island.buildProtection", true)) {
+            getServer()
+                .getPluginManager()
+                .registerEvents(new OnBlockBreak(), this);
+            getServer()
+                .getPluginManager()
+                .registerEvents(new OnBlockPlace(), this);
+            getServer()
+                .getPluginManager()
+                .registerEvents(new OnBlockClick(), this);
         }
-        if(getConfig().getBoolean("island.pvpProtection", true)){
-            getServer().getPluginManager().registerEvents(new OnEntityTarget(), this);
-            getServer().getPluginManager().registerEvents(new OnPlayerDamage(), this);
-            getServer().getPluginManager().registerEvents(new OnEntityDamageByEntity(), this);
+        if (getConfig().getBoolean("island.pvpProtection", true)) {
+            getServer()
+                .getPluginManager()
+                .registerEvents(new OnEntityTarget(), this);
+            getServer()
+                .getPluginManager()
+                .registerEvents(new OnPlayerDamage(), this);
+            getServer()
+                .getPluginManager()
+                .registerEvents(new OnEntityDamageByEntity(), this);
         }
         getServer().getPluginManager().registerEvents(new OnPlayerJoin(), this);
-        getServer().getPluginManager().registerEvents(new OnPlayerRespawn(), this);
-
+        getServer()
+            .getPluginManager()
+            .registerEvents(new OnPlayerRespawn(), this);
     }
 
     public static GridManager getGridManager() {
-
         return gridManager;
-
     }
 
     public static SqlManager getSqlManager() {
-
         return sqlManager;
-
     }
 
     public static IslandManager getIslandManager() {
-
         return islandManager;
-
     }
 
     public static SchematicManager getSchematicManager() {
-
         return schematicManager;
-
     }
 
     public static LocaleManager getLocaleManager() {
-
         return localeManager;
-
     }
-
 }
