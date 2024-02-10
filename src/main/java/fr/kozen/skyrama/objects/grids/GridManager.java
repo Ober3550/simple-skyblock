@@ -25,8 +25,9 @@ public class GridManager {
         int z = 0;
         int state = 0;
         int turnSteps = 1;
-        int turnCounter = 0;
-        for (int step = 0; step < id; step++) {
+        int turnCounter = 1;
+
+        for (int step = 1; step <= id; step++) {
             switch (state) {
                 case 0:
                     x += plotsize;
@@ -44,10 +45,10 @@ public class GridManager {
 
             if (step % turnSteps == 0) {
                 state = (state + 1) % 4;
-                turnCounter++;
                 if (turnCounter % 2 == 0) {
                     turnSteps++;
                 }
+                turnCounter++;
             }
         }
 

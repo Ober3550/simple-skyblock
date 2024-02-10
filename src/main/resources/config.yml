@@ -23,15 +23,7 @@ general:
 # Island related settings
 island:
     # The size of the plot and the distance between islands
-    plotsize: 128
-
-    # Different island extension size in blocks (island width)
-    # DON'T CHANGE THIS VALUE IN MID GAME /!\
-    extensionLevel:
-    0: 65
-    1: 129
-    2: 257
-    3: 513
+    plotsize: 32
 
     # Enable spawn on island when login
     spawnIslandLogin: true

@@ -30,66 +30,71 @@ public class IslandManager {
     }
 
     public void create(OfflinePlayer owner) {
-        int islandId = IslandDao.addIsland();
+        int islandId = IslandDao.getNextId();
+        if (islandId > 0) {
+            owner
+                .getPlayer()
+                .sendMessage(
+                    ChatColor.GREEN + "Creating island id: " + islandId
+                );
+            Location location = Skyrama
+                .getGridManager()
+                .getCenterFromId(islandId);
 
-        owner
-            .getPlayer()
-            .sendMessage(ChatColor.GREEN + "Creating island id: " + islandId);
-        Location location = Skyrama.getGridManager().getCenterFromId(islandId);
+            owner
+                .getPlayer()
+                .sendMessage(
+                    ChatColor.GREEN +
+                    "At location centred on: " +
+                    location.getX() +
+                    "x " +
+                    location.getY() +
+                    "y " +
+                    location.getZ() +
+                    "z"
+                );
+            int test;
 
-        owner
-            .getPlayer()
-            .sendMessage(
-                ChatColor.GREEN +
-                "At location centred on: " +
-                location.getX() +
-                "x " +
-                location.getY() +
-                "y " +
-                location.getZ() +
-                "z"
-            );
-        int test;
-
-        Location spawn = new Location(
-            Bukkit.getWorld(
-                Skyrama
-                    .getPlugin(Skyrama.class)
-                    .getConfig()
-                    .getString("general.world")
-            ),
-            location.getBlockX() + 1.5,
-            location.getBlockY(),
-            location.getBlockZ() - 1.5
-        );
-
-        owner
-            .getPlayer()
-            .sendMessage(
-                ChatColor.GREEN +
-                "Setting island home to: " +
-                location.getX() +
-                "x " +
-                location.getY() +
-                "y " +
-                location.getZ() +
-                "z"
+            Location spawn = new Location(
+                Bukkit.getWorld(
+                    Skyrama
+                        .getPlugin(Skyrama.class)
+                        .getConfig()
+                        .getString("general.world")
+                ),
+                location.getBlockX() + 1.5,
+                location.getBlockY() - 58,
+                location.getBlockZ() - 1.5
             );
 
-        Island island = new Island(islandId, Biome.BADLANDS, 0, spawn);
-        this.islands.add(island);
-        island.addPlayer(owner, Rank.OWNER);
-        island.setSpawn(spawn);
-        island.save();
+            owner
+                .getPlayer()
+                .sendMessage(
+                    ChatColor.GREEN +
+                    "Setting island home to: " +
+                    location.getX() +
+                    "x " +
+                    location.getY() +
+                    "y " +
+                    location.getZ() +
+                    "z"
+                );
 
-        Skyrama
-            .getSchematicManager()
-            .createIsland(
-                location.getX() + 4,
-                location.getY() + 5,
-                location.getZ() + 3
-            );
-        owner.getPlayer().teleport(spawn);
+            Island island = new Island(islandId, Biome.TAIGA, spawn);
+            this.islands.add(island);
+            island.addPlayer(owner, Rank.OWNER);
+            island.setSpawn(spawn);
+            island.save();
+
+            Skyrama
+                .getSchematicManager()
+                .createIsland(
+                    location.getX() + 4,
+                    location.getY() + 5 - 58,
+                    location.getZ() + 3
+                );
+            owner.getPlayer().teleport(spawn);
+        }
     }
 
     public Island getIslandOwnedBy(OfflinePlayer player) {

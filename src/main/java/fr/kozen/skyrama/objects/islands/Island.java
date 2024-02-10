@@ -13,15 +13,13 @@ public class Island {
 
     private int id;
     private Biome biome;
-    private int extensionLevel;
     private Map<OfflinePlayer, Rank> players;
     private Location spawn;
     private Map<Player, Player> invites;
 
-    public Island(int id, Biome biome, int extensionLevel, Location spawn) {
+    public Island(int id, Biome biome, Location spawn) {
         this.id = id;
         this.biome = biome;
-        this.extensionLevel = extensionLevel;
         this.players = IslandDao.getPlayers(id);
         this.spawn = spawn;
         this.invites = new HashMap<>();
@@ -33,10 +31,6 @@ public class Island {
 
     public Biome getBiome() {
         return this.biome;
-    }
-
-    public int getExtensionLevel() {
-        return this.extensionLevel;
     }
 
     public OfflinePlayer getOwner() {
