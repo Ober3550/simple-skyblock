@@ -18,6 +18,7 @@ public class CommandManager implements CommandExecutor {
     private final ArrayList<ISubCommand> subcommands = new ArrayList<>();
 
     public CommandManager() {
+        subcommands.add(new SpawnCommand());
         subcommands.add(new CreateCommand());
         subcommands.add(new HomeCommand());
         subcommands.add(new SetHomeCommand());

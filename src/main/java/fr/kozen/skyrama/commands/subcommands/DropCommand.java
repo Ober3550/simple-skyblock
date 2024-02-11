@@ -1,5 +1,6 @@
 package fr.kozen.skyrama.commands.subcommands;
 
+import fr.kozen.skyrama.Skyrama;
 import fr.kozen.skyrama.interfaces.ISubCommand;
 import fr.kozen.skyrama.storage.queries.IslandDao;
 import java.util.Arrays;
@@ -35,14 +36,11 @@ public class DropCommand implements ISubCommand {
 
     @Override
     public void perform(Player player, String[] args) {
-        if ("islands".equalsIgnoreCase(args[1])) {
-            IslandDao.dropIslands();
-            IslandDao.createTableIslands();
-            player.sendMessage("Dumped table islands");
-        } else if ("users".equalsIgnoreCase(args[1])) {
-            IslandDao.dropUsers();
-            IslandDao.createTableUsers();
-            player.sendMessage("Dumped table users");
-        }
+        IslandDao.dropUsers();
+        IslandDao.dropIslands();
+        IslandDao.createTableIslands();
+        IslandDao.createTableUsers();
+        Skyrama.getIslandManager().dumpIslands();
+        player.sendMessage("Dumped and reconstructed tables");
     }
 }

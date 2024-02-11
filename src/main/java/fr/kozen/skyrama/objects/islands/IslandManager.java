@@ -37,7 +37,7 @@ public class IslandManager {
                 .sendMessage(
                     ChatColor.GREEN + "Creating island id: " + islandId
                 );
-            Location location = Skyrama
+            Location center = Skyrama
                 .getGridManager()
                 .getCenterFromId(islandId);
 
@@ -46,11 +46,11 @@ public class IslandManager {
                 .sendMessage(
                     ChatColor.GREEN +
                     "At location centred on: " +
-                    location.getX() +
+                    center.getX() +
                     "x " +
-                    location.getY() +
+                    center.getY() +
                     "y " +
-                    location.getZ() +
+                    center.getZ() +
                     "z"
                 );
             int test;
@@ -62,9 +62,9 @@ public class IslandManager {
                         .getConfig()
                         .getString("general.world")
                 ),
-                location.getBlockX() + 1.5,
-                location.getBlockY() - 58,
-                location.getBlockZ() - 1.5
+                center.getBlockX() + 1.5,
+                center.getBlockY() - 58,
+                center.getBlockZ() - 1.5
             );
 
             owner
@@ -72,15 +72,15 @@ public class IslandManager {
                 .sendMessage(
                     ChatColor.GREEN +
                     "Setting island home to: " +
-                    location.getX() +
+                    spawn.getX() +
                     "x " +
-                    location.getY() +
+                    spawn.getY() +
                     "y " +
-                    location.getZ() +
+                    spawn.getZ() +
                     "z"
                 );
 
-            Island island = new Island(islandId, Biome.TAIGA, spawn);
+            Island island = new Island(islandId, center, spawn, Biome.TAIGA);
             this.islands.add(island);
             island.addPlayer(owner, Rank.OWNER);
             island.setSpawn(spawn);
@@ -89,9 +89,9 @@ public class IslandManager {
             Skyrama
                 .getSchematicManager()
                 .createIsland(
-                    location.getX() + 4,
-                    location.getY() + 5 - 58,
-                    location.getZ() + 3
+                    center.getX() + 4,
+                    center.getY() + 5 - 58,
+                    center.getZ() + 3
                 );
             owner.getPlayer().teleport(spawn);
         }
@@ -128,5 +128,9 @@ public class IslandManager {
 
     public Set<Island> getIslands() {
         return this.islands;
+    }
+
+    public void dumpIslands() {
+        this.islands = new HashSet<>();
     }
 }

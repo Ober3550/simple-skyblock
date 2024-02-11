@@ -20,13 +20,16 @@ general:
     # Name of the world where floating islands spawn
     world: world
 
+    # Adjust the spawn height to the bottom of the world
+    spawn:
+        X: 0
+        Y: -58
+        Z: 0
+
 # Island related settings
 island:
     # The size of the plot and the distance between islands
     plotsize: 32
-
-    # Enable spawn on island when login
-    spawnIslandLogin: true
 
     # Enable respawn on island when player die
     respawnIsland: true

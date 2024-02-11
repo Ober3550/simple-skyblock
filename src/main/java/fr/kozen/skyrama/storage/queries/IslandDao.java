@@ -8,6 +8,7 @@ import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
@@ -38,12 +39,15 @@ public class IslandDao {
             PreparedStatement stmt = conn.prepareStatement(
                 "CREATE TABLE IF NOT EXISTS `islands` (" +
                 "  `id` int(11) NOT NULL," +
-                "  `biome` varchar(255) NOT NULL DEFAULT 'TAIGA'," +
+                "  `center_x` float NOT NULL DEFAULT '0'," +
+                "  `center_y` float NOT NULL DEFAULT '0'," +
+                "  `center_z` float NOT NULL DEFAULT '0'," +
                 "  `spawn_x` float NOT NULL DEFAULT '0'," +
                 "  `spawn_y` float NOT NULL DEFAULT '0'," +
                 "  `spawn_z` float NOT NULL DEFAULT '0'," +
                 "  `spawn_yaw` float NOT NULL DEFAULT '0'," +
                 "  `spawn_pitch` float NOT NULL DEFAULT '0'," +
+                "  `biome` varchar(255) NOT NULL DEFAULT 'TAIGA'," +
                 "PRIMARY KEY (id)" +
                 ")"
             )
@@ -93,24 +97,33 @@ public class IslandDao {
         ) {
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()) {
+                World world = Bukkit.getWorld(
+                    Skyrama
+                        .getPlugin(Skyrama.class)
+                        .getConfig()
+                        .getString("general.world")
+                );
+                Location center = new Location(
+                    world,
+                    resultSet.getFloat("center_x"),
+                    resultSet.getFloat("center_y"),
+                    resultSet.getFloat("center_z")
+                );
+                Location spawn = new Location(
+                    world,
+                    resultSet.getFloat("spawn_x"),
+                    resultSet.getFloat("spawn_y"),
+                    resultSet.getFloat("spawn_z"),
+                    resultSet.getFloat("spawn_yaw"),
+                    resultSet.getFloat("spawn_pitch")
+                );
+                Biome biome = Biome.valueOf(resultSet.getString("biome"));
                 Island island = new Island(
                     resultSet.getInt("id"),
-                    Biome.valueOf(resultSet.getString("biome")),
-                    new Location(
-                        Bukkit.getWorld(
-                            Skyrama
-                                .getPlugin(Skyrama.class)
-                                .getConfig()
-                                .getString("general.world")
-                        ),
-                        resultSet.getFloat("spawn_x"),
-                        resultSet.getFloat("spawn_y"),
-                        resultSet.getFloat("spawn_z"),
-                        resultSet.getFloat("spawn_yaw"),
-                        resultSet.getFloat("spawn_pitch")
-                    )
+                    center,
+                    spawn,
+                    biome
                 );
-
                 islands.add(island);
             }
         } catch (SQLException e) {
@@ -159,16 +172,29 @@ public class IslandDao {
         try (
             Connection conn = Skyrama.getSqlManager().getConnection();
             PreparedStatement stmt = conn.prepareStatement(
-                "UPDATE islands SET biome = ?, spawn_x = ?, spawn_y = ?, spawn_z = ?, spawn_yaw = ?, spawn_pitch = ? WHERE id = ?;"
+                "UPDATE islands SET " +
+                "center_x = ?, " +
+                "center_y = ?, " +
+                "center_z = ?, " +
+                "spawn_x = ?, " +
+                "spawn_y = ?, " +
+                "spawn_z = ?, " +
+                "spawn_yaw = ?, " +
+                "spawn_pitch = ?, " +
+                "biome = ? " +
+                "WHERE id = ?;"
             )
         ) {
-            stmt.setString(1, String.valueOf(island.getBiome()));
-            stmt.setFloat(2, island.getSpawn().getBlockX());
-            stmt.setFloat(3, island.getSpawn().getBlockY());
-            stmt.setFloat(4, island.getSpawn().getBlockZ());
-            stmt.setFloat(5, island.getSpawn().getYaw());
-            stmt.setFloat(6, island.getSpawn().getPitch());
-            stmt.setInt(7, island.getId());
+            stmt.setFloat(1, island.getCenter().getBlockX());
+            stmt.setFloat(2, island.getCenter().getBlockY());
+            stmt.setFloat(3, island.getCenter().getBlockZ());
+            stmt.setFloat(4, island.getSpawn().getBlockX());
+            stmt.setFloat(5, island.getSpawn().getBlockY());
+            stmt.setFloat(6, island.getSpawn().getBlockZ());
+            stmt.setFloat(7, island.getSpawn().getYaw());
+            stmt.setFloat(8, island.getSpawn().getPitch());
+            stmt.setString(9, String.valueOf(island.getBiome()));
+            stmt.setInt(10, island.getId());
 
             stmt.executeUpdate();
         } catch (SQLException e) {

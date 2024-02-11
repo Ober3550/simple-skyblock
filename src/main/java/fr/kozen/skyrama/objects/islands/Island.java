@@ -12,17 +12,27 @@ import org.bukkit.entity.Player;
 public class Island {
 
     private int id;
+    private Location center;
+    private Location spawn;
     private Biome biome;
     private Map<OfflinePlayer, Rank> players;
-    private Location spawn;
     private Map<Player, Player> invites;
 
-    public Island(int id, Biome biome, Location spawn) {
+    public Island(int id, Location center, Location spawn, Biome biome) {
         this.id = id;
+        this.center = center;
+        this.spawn = spawn;
         this.biome = biome;
         this.players = IslandDao.getPlayers(id);
-        this.spawn = spawn;
         this.invites = new HashMap<>();
+    }
+
+    public boolean createIsland(Player player) {
+        return true;
+    }
+
+    public boolean deleteIsland(Player player) {
+        return true;
     }
 
     public int getId() {
@@ -74,6 +84,10 @@ public class Island {
 
     public Map<Player, Player> getInvites() {
         return this.invites;
+    }
+
+    public Location getCenter() {
+        return this.center;
     }
 
     public Location getSpawn() {
