@@ -52,7 +52,6 @@ public final class Skyrama extends JavaPlugin {
         localeManager = new LocaleManager();
 
         sqlManager.populate();
-        islandManager.loadIslands();
     }
 
     public void initEvents() {

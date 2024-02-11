@@ -55,7 +55,7 @@ public class GridManager {
         return new Location(Bukkit.getWorld("world"), x, 0, z);
     }
 
-    public int getIdFromLocation(Location location, Player player) {
+    public int getIdFromLocation(Location location) {
         int plotsize = Integer.parseInt(
             Skyrama
                 .getPlugin(Skyrama.class)

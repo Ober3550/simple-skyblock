@@ -1,6 +1,7 @@
 package fr.kozen.skyrama.objects.islands;
 
 import fr.kozen.skyrama.Skyrama;
+import fr.kozen.skyrama.objects.islands.Island;
 import fr.kozen.skyrama.storage.queries.IslandDao;
 import fr.kozen.skyrama.types.Rank;
 import java.util.*;
@@ -9,27 +10,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Biome;
+import org.bukkit.entity.Player;
 
 public class IslandManager {
 
-    public Set<Island> islands;
+    public IslandManager() {}
 
-    public IslandManager() {
-        this.initialise();
-    }
-
-    public void initialise() {
-        this.islands = new HashSet<>();
-    }
-
-    public void loadIslands() {
-        this.islands = IslandDao.getIslands();
-        this.islands.forEach(island ->
-                Bukkit.getLogger().info(String.valueOf(island.getId()))
-            );
-    }
-
-    public void create(OfflinePlayer owner) {
+    public void create(Player owner) {
         int islandId = IslandDao.getNextId();
         if (islandId > 0) {
             owner
@@ -81,7 +68,6 @@ public class IslandManager {
                 );
 
             Island island = new Island(islandId, center, spawn, Biome.TAIGA);
-            this.islands.add(island);
             island.addPlayer(owner, Rank.OWNER);
             island.setSpawn(spawn);
             island.save();
@@ -93,44 +79,13 @@ public class IslandManager {
                     center.getY() + 5 - 58,
                     center.getZ() + 3
                 );
+            Skyrama.getSchematicManager().claimRegion(owner, islandId);
             owner.getPlayer().teleport(spawn);
         }
     }
 
-    public Island getIslandOwnedBy(OfflinePlayer player) {
-        return this.getIslands()
-            .stream()
-            .filter(island ->
-                island.getOwner().getUniqueId().equals(player.getUniqueId())
-            )
-            .findAny()
-            .orElse(null);
-    }
-
-    public Island getPlayerIsland(OfflinePlayer player) {
-        return this.getIslands()
-            .stream()
-            .filter(island ->
-                island
-                    .getPlayers()
-                    .keySet()
-                    .stream()
-                    .filter(offlinePlayer ->
-                        offlinePlayer.getUniqueId().equals(player.getUniqueId())
-                    )
-                    .findAny()
-                    .orElse(null) !=
-                null
-            )
-            .findAny()
-            .orElse(null);
-    }
-
-    public Set<Island> getIslands() {
-        return this.islands;
-    }
-
-    public void dumpIslands() {
-        this.islands = new HashSet<>();
+    public Island getPlayerIsland(Player player) {
+        int islandId = IslandDao.getPlayerIsland(player);
+        return IslandDao.getIsland(islandId);
     }
 }

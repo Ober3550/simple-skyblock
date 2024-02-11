@@ -43,7 +43,7 @@ public class GetIdCommand implements ISubCommand {
             "x " +
             loc.getBlockZ() +
             "z is: " +
-            Skyrama.getGridManager().getIdFromLocation(loc, player)
+            Skyrama.getGridManager().getIdFromLocation(loc)
         );
     }
 }

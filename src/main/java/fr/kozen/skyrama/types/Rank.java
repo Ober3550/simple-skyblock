@@ -7,7 +7,9 @@ public enum Rank {
 
     public final int rank;
 
-    Rank(int rank) { this.rank = rank; }
+    Rank(int rank) {
+        this.rank = rank;
+    }
 
     public static Rank fromInt(int id) {
         switch (id) {
@@ -20,4 +22,7 @@ public enum Rank {
         }
     }
 
+    public int getValue() {
+        return rank;
+    }
 }

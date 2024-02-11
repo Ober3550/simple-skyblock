@@ -11,15 +11,21 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import fr.kozen.skyrama.Skyrama;
+import fr.kozen.skyrama.storage.queries.IslandDao;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Objects;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class SchematicManager {
@@ -90,6 +96,120 @@ public class SchematicManager {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void claimRegion(Player player, int islandId) {
+        FileConfiguration config = Skyrama.getPlugin(Skyrama.class).getConfig();
+        String worldString = config.getString("general.world");
+        World world = Bukkit.getWorld(worldString);
+
+        int offset = Integer.parseInt(config.getString("island.plotsize")) / 2;
+        Location center = Skyrama.getGridManager().getCenterFromId(islandId);
+        BlockVector3 start = BlockVector3.at(
+            center.getBlockX() - offset,
+            -64,
+            center.getBlockZ() - offset
+        );
+        BlockVector3 end = BlockVector3.at(
+            center.getBlockX() + offset,
+            320,
+            center.getBlockZ() + offset
+        );
+
+        Server server = Bukkit.getServer();
+        server.dispatchCommand(
+            Bukkit.getConsoleSender(),
+            "/world " + worldString
+        );
+        server.dispatchCommand(
+            Bukkit.getConsoleSender(),
+            "/pos1 " +
+            start.getBlockX() +
+            "," +
+            start.getBlockY() +
+            "," +
+            start.getBlockZ()
+        );
+        server.dispatchCommand(
+            Bukkit.getConsoleSender(),
+            "/pos2 " +
+            end.getBlockX() +
+            "," +
+            end.getBlockY() +
+            "," +
+            end.getBlockZ()
+        );
+        server.dispatchCommand(
+            Bukkit.getConsoleSender(),
+            "rg define island" + islandId + " " + player.getName()
+        );
+        try {
+            Thread.sleep(100);
+        } catch (Exception e) {}
+        server.dispatchCommand(
+            Bukkit.getConsoleSender(),
+            "rg flag island" +
+            islandId +
+            " greeting Welcome to " +
+            player.getName() +
+            "'s Island!"
+        );
+    }
+
+    public void deleteRegion(Player player, int islandId) {
+        if (islandId > 0) {
+            FileConfiguration config = Skyrama
+                .getPlugin(Skyrama.class)
+                .getConfig();
+            String worldString = config.getString("general.world");
+            World world = Bukkit.getWorld(worldString);
+
+            int offset =
+                Integer.parseInt(config.getString("island.plotsize")) / 2;
+            Location center = Skyrama
+                .getGridManager()
+                .getCenterFromId(islandId);
+            BlockVector3 start = BlockVector3.at(
+                center.getBlockX() - offset,
+                -64,
+                center.getBlockZ() - offset
+            );
+            BlockVector3 end = BlockVector3.at(
+                center.getBlockX() + offset,
+                320,
+                center.getBlockZ() + offset
+            );
+
+            Server server = Bukkit.getServer();
+            server.dispatchCommand(
+                Bukkit.getConsoleSender(),
+                "/world " + worldString
+            );
+            server.dispatchCommand(
+                Bukkit.getConsoleSender(),
+                "/pos1 " +
+                start.getBlockX() +
+                "," +
+                start.getBlockY() +
+                "," +
+                start.getBlockZ()
+            );
+            server.dispatchCommand(
+                Bukkit.getConsoleSender(),
+                "/pos2 " +
+                end.getBlockX() +
+                "," +
+                end.getBlockY() +
+                "," +
+                end.getBlockZ()
+            );
+            server.dispatchCommand(Bukkit.getConsoleSender(), "/set 0");
+            server.dispatchCommand(
+                Bukkit.getConsoleSender(),
+                "rg delete island" + islandId
+            );
+            IslandDao.removeIsland(islandId);
         }
     }
 }

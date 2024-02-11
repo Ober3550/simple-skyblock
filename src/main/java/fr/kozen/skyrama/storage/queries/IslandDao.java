@@ -15,18 +15,16 @@ import org.bukkit.entity.Player;
 public class IslandDao {
 
     public static void createTableUsers() {
-        try (
+        try {
             Connection conn = Skyrama.getSqlManager().getConnection();
             PreparedStatement stmt = conn.prepareStatement(
                 "CREATE TABLE IF NOT EXISTS `islands_users` (" +
-                "  `id` int(11) NOT NULL AUTO_INCREMENT," +
                 "  `uuid` varchar(255) NOT NULL," +
                 "  `island_id` int(11) NOT NULL," +
                 "  `rank` int(11) NOT NULL," +
-                "PRIMARY KEY (id)" +
+                "PRIMARY KEY (uuid)" +
                 ")"
-            )
-        ) {
+            );
             stmt.executeUpdate();
         } catch (SQLException e) {
             Bukkit.getLogger().info("Something went wrong. " + e);
@@ -34,7 +32,7 @@ public class IslandDao {
     }
 
     public static void createTableIslands() {
-        try (
+        try {
             Connection conn = Skyrama.getSqlManager().getConnection();
             PreparedStatement stmt = conn.prepareStatement(
                 "CREATE TABLE IF NOT EXISTS `islands` (" +
@@ -50,8 +48,7 @@ public class IslandDao {
                 "  `biome` varchar(255) NOT NULL DEFAULT 'TAIGA'," +
                 "PRIMARY KEY (id)" +
                 ")"
-            )
-        ) {
+            );
             stmt.executeUpdate();
         } catch (SQLException e) {
             Bukkit.getLogger().info("Something went wrong. " + e);
@@ -59,12 +56,12 @@ public class IslandDao {
     }
 
     public static int getNextId() {
-        try (
+        try {
             Connection conn = Skyrama.getSqlManager().getConnection();
             PreparedStatement stmt = conn.prepareStatement(
                 "SELECT islands.id + 1 AS missing from islands LEFT JOIN islands AS nextIsland ON islands.id + 1 = nextIsland.id WHERE nextIsland.id IS NULL ORDER BY islands.id LIMIT 1;"
-            )
-        ) {
+            );
+
             ResultSet rs = stmt.executeQuery();
             int id = 1;
             while (rs.next()) {
@@ -84,17 +81,14 @@ public class IslandDao {
         return 0;
     }
 
-    public static Set<Island> getIslands() {
-        Bukkit.getLogger().info("Gettings islands...");
-
-        Set<Island> islands = new HashSet<>();
-
-        try (
+    public static Island getIsland(int islandId) {
+        try {
             Connection conn = Skyrama.getSqlManager().getConnection();
             PreparedStatement stmt = conn.prepareStatement(
-                "SELECT * FROM islands"
-            )
-        ) {
+                "SELECT * FROM islands WHERE id = ?"
+            );
+            stmt.setInt(1, islandId);
+
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()) {
                 World world = Bukkit.getWorld(
@@ -118,31 +112,27 @@ public class IslandDao {
                     resultSet.getFloat("spawn_pitch")
                 );
                 Biome biome = Biome.valueOf(resultSet.getString("biome"));
-                Island island = new Island(
-                    resultSet.getInt("id"),
-                    center,
-                    spawn,
-                    biome
-                );
-                islands.add(island);
+                Bukkit
+                    .getLogger()
+                    .info("Successfully loaded island: " + islandId);
+                return new Island(islandId, center, spawn, biome);
             }
         } catch (SQLException e) {
             Bukkit.getLogger().info("Something went wrong. " + e);
         }
-
-        return islands;
+        return null;
     }
 
     public static Map<OfflinePlayer, Rank> getPlayers(int islandId) {
         Map<OfflinePlayer, Rank> players = new HashMap<>();
 
-        try (
+        try {
             Connection conn = Skyrama.getSqlManager().getConnection();
             PreparedStatement stmt = conn.prepareStatement(
                 "SELECT * FROM islands_users WHERE island_id = ?"
-            )
-        ) {
+            );
             stmt.setInt(1, islandId);
+
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()) {
                 Bukkit
@@ -168,8 +158,33 @@ public class IslandDao {
         return players;
     }
 
+    public static int getPlayerIsland(Player player) {
+        try {
+            Connection conn = Skyrama.getSqlManager().getConnection();
+            PreparedStatement stmt = conn.prepareStatement(
+                "SELECT * FROM islands_users WHERE uuid = ? AND `rank` = ?"
+            );
+            stmt.setString(1, player.getUniqueId().toString());
+            stmt.setInt(2, Rank.OWNER.getValue());
+            ResultSet resultSet = stmt.executeQuery();
+
+            while (resultSet.next()) {
+                Bukkit
+                    .getLogger()
+                    .info(
+                        "Found owner for island: " +
+                        resultSet.getInt("island_id")
+                    );
+                return resultSet.getInt("island_id");
+            }
+        } catch (SQLException e) {
+            Bukkit.getLogger().info("Something went wrong. " + e);
+        }
+        return 0;
+    }
+
     public static void save(Island island) {
-        try (
+        try {
             Connection conn = Skyrama.getSqlManager().getConnection();
             PreparedStatement stmt = conn.prepareStatement(
                 "UPDATE islands SET " +
@@ -183,8 +198,7 @@ public class IslandDao {
                 "spawn_pitch = ?, " +
                 "biome = ? " +
                 "WHERE id = ?;"
-            )
-        ) {
+            );
             stmt.setFloat(1, island.getCenter().getBlockX());
             stmt.setFloat(2, island.getCenter().getBlockY());
             stmt.setFloat(3, island.getCenter().getBlockZ());
@@ -207,12 +221,11 @@ public class IslandDao {
         Island island,
         Rank rank
     ) {
-        try (
+        try {
             Connection conn = Skyrama.getSqlManager().getConnection();
             PreparedStatement stmt = conn.prepareStatement(
                 "INSERT INTO islands_users(`uuid`, `island_id`, `rank`) VALUES(?, ?, ?);"
-            )
-        ) {
+            );
             stmt.setString(1, player.getUniqueId().toString());
             stmt.setInt(2, island.getId());
             stmt.setInt(3, rank.rank);
@@ -223,12 +236,11 @@ public class IslandDao {
     }
 
     public static void removePlayer(OfflinePlayer player) {
-        try (
+        try {
             Connection conn = Skyrama.getSqlManager().getConnection();
             PreparedStatement stmt = conn.prepareStatement(
                 "DELETE FROM islands_users WHERE uuid = ?;"
-            )
-        ) {
+            );
             stmt.setString(1, player.getUniqueId().toString());
             stmt.execute();
         } catch (SQLException e) {
@@ -236,17 +248,39 @@ public class IslandDao {
         }
     }
 
+    public static void removeIsland(int islandId) {
+        try {
+            Connection conn = Skyrama.getSqlManager().getConnection();
+            PreparedStatement stmt = conn.prepareStatement(
+                "DELETE FROM islands WHERE id = ?;"
+            );
+            stmt.setInt(1, islandId);
+            stmt.execute();
+        } catch (SQLException e) {
+            Bukkit.getLogger().info("Something went wrong. " + e);
+        }
+
+        try {
+            Connection conn = Skyrama.getSqlManager().getConnection();
+            PreparedStatement stmt = conn.prepareStatement(
+                "DELETE FROM islands_users WHERE island_id = ?;"
+            );
+            stmt.setInt(1, islandId);
+            stmt.execute();
+        } catch (SQLException e) {
+            Bukkit.getLogger().info("Something went wrong. " + e);
+        }
+    }
+
     public static void setPlayerIsland(Player player, Island island) {
-        try (
+        try {
             Connection conn = Skyrama.getSqlManager().getConnection();
             PreparedStatement stmt = conn.prepareStatement(
                 "UPDATE islands_users SET island_id = ?, rank = ? WHERE uuid = ?;"
-            )
-        ) {
+            );
             stmt.setInt(1, island.getId());
             stmt.setInt(2, 1);
             stmt.setString(3, player.getUniqueId().toString());
-
             stmt.executeUpdate();
         } catch (SQLException e) {
             Bukkit.getLogger().info("Something went wrong. " + e);
@@ -254,12 +288,11 @@ public class IslandDao {
     }
 
     public static void dropUsers() {
-        try (
+        try {
             Connection conn = Skyrama.getSqlManager().getConnection();
             PreparedStatement stmt = conn.prepareStatement(
                 "DROP TABLE islands_users;"
-            )
-        ) {
+            );
             stmt.executeUpdate();
         } catch (SQLException e) {
             Bukkit.getLogger().info("Something went wrong. " + e);
@@ -267,12 +300,11 @@ public class IslandDao {
     }
 
     public static void dropIslands() {
-        try (
+        try {
             Connection conn = Skyrama.getSqlManager().getConnection();
             PreparedStatement stmt = conn.prepareStatement(
                 "DROP TABLE islands;"
-            )
-        ) {
+            );
             stmt.executeUpdate();
         } catch (SQLException e) {
             Bukkit.getLogger().info("Something went wrong. " + e);

@@ -30,7 +30,7 @@ setspawn-out-island: §cYou can't place your spawn out of your island.
 setspawn-success: §aNew spawn set with success!
 
 # ISLAND VISIT
-player-visit-island: §aTeleporting to {0} island...
+player-visit-island: §aTeleporting to {0}'s island...
 
 player-no-owner: §cYou are not the owner of this island!
 player-leave-island: §aYou leave the island with success!

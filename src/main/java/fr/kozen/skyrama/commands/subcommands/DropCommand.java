@@ -40,7 +40,6 @@ public class DropCommand implements ISubCommand {
         IslandDao.dropIslands();
         IslandDao.createTableIslands();
         IslandDao.createTableUsers();
-        Skyrama.getIslandManager().dumpIslands();
         player.sendMessage("Dumped and reconstructed tables");
     }
 }

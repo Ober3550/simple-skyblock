@@ -20,6 +20,7 @@ public class CommandManager implements CommandExecutor {
     public CommandManager() {
         subcommands.add(new SpawnCommand());
         subcommands.add(new CreateCommand());
+        subcommands.add(new DeleteCommand());
         subcommands.add(new HomeCommand());
         subcommands.add(new SetHomeCommand());
         subcommands.add(new VisitCommand());
