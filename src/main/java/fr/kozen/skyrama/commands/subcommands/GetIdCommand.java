@@ -20,17 +20,12 @@ public class GetIdCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.getId";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island getId";
+        return "/is getId";
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> getArgs(Player player) {
         return Arrays.asList();
     }
 

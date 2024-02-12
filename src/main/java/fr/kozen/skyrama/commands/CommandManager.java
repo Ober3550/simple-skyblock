@@ -3,10 +3,10 @@ package fr.kozen.skyrama.commands;
 import fr.kozen.skyrama.Skyrama;
 import fr.kozen.skyrama.commands.subcommands.*;
 import fr.kozen.skyrama.interfaces.ISubCommand;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import javax.annotation.Nullable;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 public class CommandManager implements CommandExecutor {
 
-    private final ArrayList<ISubCommand> subcommands = new ArrayList<>();
+    public final List<ISubCommand> subcommands = new ArrayList<>();
 
     public CommandManager() {
         subcommands.add(new SpawnCommand());
@@ -49,32 +49,18 @@ public class CommandManager implements CommandExecutor {
         String[] args
     ) {
         if (args.length > 0) {
-            for (int i = 0; i < getSubcommands().size(); i++) {
-                if (
-                    args[0].equalsIgnoreCase(getSubcommands().get(i).getName())
-                ) {
-                    if (
-                        sender.hasPermission(
-                            getSubcommands().get(i).getPermission()
-                        )
-                    ) {
-                        getSubcommands().get(i).perform((Player) sender, args);
-                    } else {
-                        sender.sendMessage(
-                            Skyrama
-                                .getLocaleManager()
-                                .getString("player-noperm")
-                        );
-                    }
+            for (int i = 0; i < subcommands.size(); i++) {
+                if (args[0].equalsIgnoreCase(subcommands.get(i).getName())) {
+                    subcommands.get(i).perform((Player) sender, args);
                 }
             }
         } else if (args.length == 0) {
             sender.sendMessage("--------------------------------");
-            for (int i = 0; i < getSubcommands().size(); i++) {
+            for (int i = 0; i < subcommands.size(); i++) {
                 sender.sendMessage(
-                    getSubcommands().get(i).getSyntax() +
+                    subcommands.get(i).getSyntax() +
                     " - " +
-                    getSubcommands().get(i).getDescription()
+                    subcommands.get(i).getDescription()
                 );
             }
             sender.sendMessage("--------------------------------");
@@ -95,40 +81,30 @@ public class CommandManager implements CommandExecutor {
                         @NotNull String alias,
                         @NotNull String[] args
                     ) {
-                        if (command.getName().equalsIgnoreCase("islandx")) {
-                            List<String> l = new ArrayList<>();
-                            if (args.length == 1) {
-                                getSubcommands()
-                                    .forEach(subCommand -> {
-                                        l.add(subCommand.getName());
+                        List<String> l = new ArrayList<>();
+                        if (args.length == 1) {
+                            subcommands.forEach(subCommand -> {
+                                l.add(subCommand.getName());
+                            });
+                        } else if (args.length == 2) {
+                            ISubCommand subCommand = subcommands
+                                .stream()
+                                .filter(subCommandFilter ->
+                                    subCommandFilter.getName().equals(args[0])
+                                )
+                                .findAny()
+                                .orElse(null);
+                            if (subCommand != null) {
+                                subCommand
+                                    .getArgs((Player) sender)
+                                    .forEach(arg -> {
+                                        l.add(arg);
                                     });
-                            } else if (args.length == 2) {
-                                ISubCommand subCommand = getSubcommands()
-                                    .stream()
-                                    .filter(subCommandFilter ->
-                                        subCommandFilter
-                                            .getName()
-                                            .equals(args[0])
-                                    )
-                                    .findAny()
-                                    .orElse(null);
-                                if (subCommand != null) {
-                                    subCommand
-                                        .getArgs()
-                                        .forEach(arg -> {
-                                            l.add(arg);
-                                        });
-                                }
                             }
-                            return l;
                         }
-                        return null;
+                        return l;
                     }
                 }
             );
-    }
-
-    public ArrayList<ISubCommand> getSubcommands() {
-        return subcommands;
     }
 }

@@ -24,17 +24,12 @@ public class HomeCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.home";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island home";
+        return "/is home";
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> getArgs(Player player) {
         return Arrays.asList();
     }
 

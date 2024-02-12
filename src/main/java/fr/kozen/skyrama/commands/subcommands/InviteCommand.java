@@ -27,18 +27,13 @@ public class InviteCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.invite";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island invite {add | accept | deny}";
+        return "/is invite <add|accept|deny>";
     }
 
     @Override
-    public List<String> getArgs() {
-        return Arrays.asList("add", "accept");
+    public List<String> getArgs(Player player) {
+        return Arrays.asList("add", "accept", "decline");
     }
 
     @Override
@@ -46,7 +41,7 @@ public class InviteCommand implements ISubCommand {
         if (args.length < 3) {
             player.sendMessage(
                 ChatColor.RED +
-                "Invalid syntax: /island invite <add | accept> <player>"
+                "Invalid syntax: /is invite <add | accept> <player>"
             );
             return;
         }

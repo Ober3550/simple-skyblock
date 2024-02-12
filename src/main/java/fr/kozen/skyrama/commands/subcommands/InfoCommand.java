@@ -22,17 +22,12 @@ public class InfoCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.info";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island info";
+        return "/is info";
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> getArgs(Player player) {
         return Arrays.asList();
     }
 

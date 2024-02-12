@@ -24,17 +24,12 @@ public class DeleteCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.delete";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island delete";
+        return "/is delete";
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> getArgs(Player player) {
         return Arrays.asList();
     }
 

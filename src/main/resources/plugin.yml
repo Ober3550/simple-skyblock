@@ -6,6 +6,7 @@ authors: [Kozen]
 description: Skyblock plugin for Minecraft 1.19.2
 depends:
     - WorldEdit
+    - WorldGuard
 commands:
     island:
         description: Island command

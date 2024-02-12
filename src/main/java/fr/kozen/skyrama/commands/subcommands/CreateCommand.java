@@ -23,17 +23,12 @@ public class CreateCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.create";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island create";
+        return "/is create";
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> getArgs(Player player) {
         return Arrays.asList();
     }
 

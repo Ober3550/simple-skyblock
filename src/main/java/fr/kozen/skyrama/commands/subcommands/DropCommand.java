@@ -21,27 +21,24 @@ public class DropCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.drop";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island drop";
+        return "/is drop";
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> getArgs(Player player) {
         return Arrays.asList();
     }
 
     @Override
     public void perform(Player player, String[] args) {
-        Island.dropTable();
-        Island.createTable();
-        IslandUser.dropTable();
-        IslandUser.createTable();
+        if (player.isOp()) {
+            Island.dropTable();
+            Island.createTable();
+            IslandUser.dropTable();
+            IslandUser.createTable();
 
-        player.sendMessage("Dumped and reconstructed tables");
+            player.sendMessage("Dumped and reconstructed tables");
+        }
     }
 }

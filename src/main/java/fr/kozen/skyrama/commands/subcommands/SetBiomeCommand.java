@@ -24,18 +24,19 @@ public class SetBiomeCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.setspawn";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island sethome <biome>";
+        return "/is setbiome <biome>";
     }
 
     @Override
-    public List<String> getArgs() {
-        return Arrays.asList();
+    public List<String> getArgs(Player player) {
+        return Arrays.asList(
+            Arrays
+                .stream(Biome.values())
+                .map(Enum::name)
+                .map(String::toLowerCase)
+                .toArray(String[]::new)
+        );
     }
 
     @Override
@@ -68,6 +69,7 @@ public class SetBiomeCommand implements ISubCommand {
                     "Successfully changed island biome to: " +
                     args[1]
                 );
+                player.sendMessage(ChatColor.GREEN + "Relog to see changes");
             } else {
                 player.sendMessage(ChatColor.RED + "You don't own an island");
             }

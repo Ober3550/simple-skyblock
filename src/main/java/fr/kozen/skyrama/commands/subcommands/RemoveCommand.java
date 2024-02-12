@@ -23,17 +23,12 @@ public class RemoveCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.remove";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island remove <player>";
+        return "/is remove <player>";
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> getArgs(Player player) {
         return Arrays.asList();
     }
 

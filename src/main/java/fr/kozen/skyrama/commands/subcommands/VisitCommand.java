@@ -4,8 +4,7 @@ import fr.kozen.skyrama.Skyrama;
 import fr.kozen.skyrama.interfaces.ISubCommand;
 import fr.kozen.skyrama.objects.islands.Island;
 import fr.kozen.skyrama.objects.islands.IslandUser;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -24,18 +23,17 @@ public class VisitCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.visit";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island visit {player}";
+        return "/is visit <player>";
     }
 
     @Override
-    public List<String> getArgs() {
-        return Arrays.asList();
+    public List<String> getArgs(Player player) {
+        List<String> usernames = new ArrayList<String>();
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            usernames.add(onlinePlayer.getName());
+        }
+        return usernames;
     }
 
     @Override

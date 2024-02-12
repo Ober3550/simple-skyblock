@@ -23,17 +23,12 @@ public class LeaveCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.leave";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island leave";
+        return "/is leave";
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> getArgs(Player player) {
         return Arrays.asList();
     }
 

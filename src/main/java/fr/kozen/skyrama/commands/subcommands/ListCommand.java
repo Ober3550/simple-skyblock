@@ -20,17 +20,12 @@ public class ListCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.list";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island list";
+        return "/is list";
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> getArgs(Player player) {
         return Arrays.asList();
     }
 

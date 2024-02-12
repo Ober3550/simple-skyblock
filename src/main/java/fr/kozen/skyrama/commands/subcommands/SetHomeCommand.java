@@ -22,17 +22,12 @@ public class SetHomeCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.setspawn";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island sethome";
+        return "/is sethome";
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> getArgs(Player player) {
         return Arrays.asList();
     }
 

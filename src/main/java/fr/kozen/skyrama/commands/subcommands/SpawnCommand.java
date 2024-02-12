@@ -23,17 +23,12 @@ public class SpawnCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.spawn";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island spawn";
+        return "/is spawn";
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> getArgs(Player player) {
         return Arrays.asList();
     }
 

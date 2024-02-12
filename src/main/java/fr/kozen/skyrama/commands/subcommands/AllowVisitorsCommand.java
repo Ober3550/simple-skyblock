@@ -23,18 +23,13 @@ public class AllowVisitorsCommand implements ISubCommand {
     }
 
     @Override
-    public String getPermission() {
-        return "skyrama.command.setspawn";
-    }
-
-    @Override
     public String getSyntax() {
-        return "/island visitors";
+        return "/is visitors <enabled|disabled>";
     }
 
     @Override
-    public List<String> getArgs() {
-        return Arrays.asList();
+    public List<String> getArgs(Player player) {
+        return Arrays.asList("enabled", "disabled");
     }
 
     @Override
