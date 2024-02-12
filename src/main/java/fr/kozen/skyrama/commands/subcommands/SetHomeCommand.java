@@ -5,8 +5,7 @@ import fr.kozen.skyrama.interfaces.ISubCommand;
 import fr.kozen.skyrama.objects.islands.Island;
 import fr.kozen.skyrama.objects.islands.IslandUser;
 import fr.kozen.skyrama.types.Rank;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -44,7 +43,8 @@ public class SetHomeCommand implements ISubCommand {
             .getIdFromLocation(player.getLocation());
         List<IslandUser> islandUsers = IslandUser.getPlayersForIsland(islandId);
         islandUsers.removeIf(i ->
-            i.username != player.getName() && i.islandId != islandId
+            !Objects.equals(i.username, player.getName()) ||
+            i.islandId != islandId
         );
         if (islandUsers.size() == 1) {
             Island island = Island.getIsland(islandId);

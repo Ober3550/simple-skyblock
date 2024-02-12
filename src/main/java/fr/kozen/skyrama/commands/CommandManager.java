@@ -25,6 +25,7 @@ public class CommandManager implements CommandExecutor {
 
         subcommands.add(new HomeCommand());
         subcommands.add(new SetHomeCommand());
+        subcommands.add(new SetBiomeCommand());
 
         subcommands.add(new VisitCommand());
         subcommands.add(new AllowVisitorsCommand());

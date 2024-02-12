@@ -25,6 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -196,6 +197,17 @@ public class SchematicManager {
                 "rg delete island" + islandId
             );
             Island.delete(islandId);
+        }
+    }
+
+    public void setRegionBiome(String username, int islandId, Biome biome) {
+        if (islandId > 0) {
+            selectRegion(username, islandId);
+            Server server = Bukkit.getServer();
+            server.dispatchCommand(
+                Bukkit.getConsoleSender(),
+                "/setbiome " + String.valueOf(biome).toLowerCase()
+            );
         }
     }
 }
