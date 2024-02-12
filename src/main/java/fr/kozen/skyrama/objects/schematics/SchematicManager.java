@@ -105,7 +105,8 @@ public class SchematicManager {
         String worldString = config.getString("general.world");
         World world = Bukkit.getWorld(worldString);
 
-        int offset = Integer.parseInt(config.getString("island.plotsize")) / 2;
+        int offset =
+            Integer.parseInt(config.getString("island.plotsize")) * 16 / 2;
         Location center = Skyrama.getGridManager().getCenterFromId(islandId);
         BlockVector3 start = BlockVector3.at(
             center.getBlockX() - offset,
@@ -179,23 +180,49 @@ public class SchematicManager {
     public void removeMemberFromRegion(String username, int islandId) {
         if (islandId > 0) {
             selectRegion(username, islandId);
-            Server server = Bukkit.getServer();
-            server.dispatchCommand(
-                Bukkit.getConsoleSender(),
-                "rg removemember island" + islandId + " " + username
-            );
+            Bukkit
+                .getServer()
+                .dispatchCommand(
+                    Bukkit.getConsoleSender(),
+                    "rg removemember island" + islandId + " " + username
+                );
         }
     }
 
     public void deleteRegion(String username, int islandId) {
         if (islandId > 0) {
-            selectRegion(username, islandId);
-            Server server = Bukkit.getServer();
-            server.dispatchCommand(Bukkit.getConsoleSender(), "/set 0");
-            server.dispatchCommand(
-                Bukkit.getConsoleSender(),
-                "rg delete island" + islandId
+            World world = Bukkit.getWorld(
+                Skyrama
+                    .getPlugin(Skyrama.class)
+                    .getConfig()
+                    .getString("general.world")
             );
+            FileConfiguration config = Skyrama
+                .getPlugin(Skyrama.class)
+                .getConfig();
+            int offset =
+                Integer.parseInt(config.getString("island.plotsize")) / 2;
+            Location center = Skyrama
+                .getGridManager()
+                .getCenterFromId(islandId);
+            int startX = center.getBlockX() / 16 - offset;
+            int endX = center.getBlockX() / 16 + offset;
+            int startZ = center.getBlockZ() / 16 - offset;
+            int endZ = center.getBlockZ() / 16 + offset;
+            int count = 0;
+            for (int i = startX; i < endX; i++) {
+                for (int j = startZ; j < endZ; j++) {
+                    count++;
+                    world.regenerateChunk(i, j);
+                }
+            }
+            Bukkit.getLogger().info("Chunks deleted: " + count);
+            Bukkit
+                .getServer()
+                .dispatchCommand(
+                    Bukkit.getConsoleSender(),
+                    "rg delete island" + islandId
+                );
             Island.delete(islandId);
         }
     }

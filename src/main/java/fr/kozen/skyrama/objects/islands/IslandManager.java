@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Biome;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class IslandManager {
@@ -18,6 +19,12 @@ public class IslandManager {
 
     public void createIsland(Player owner, int islandId) {
         if (islandId > 0) {
+            FileConfiguration config = Skyrama
+                .getPlugin(Skyrama.class)
+                .getConfig();
+            int verticalOffset = Integer.parseInt(
+                config.getString("general.spawn.Y")
+            );
             owner
                 .getPlayer()
                 .sendMessage(
@@ -49,7 +56,7 @@ public class IslandManager {
                         .getString("general.world")
                 ),
                 center.getBlockX() + 1.5,
-                center.getBlockY() - 58,
+                center.getBlockY() + verticalOffset,
                 center.getBlockZ() - 1.5
             );
 
@@ -87,12 +94,9 @@ public class IslandManager {
                 .getSchematicManager()
                 .createIsland(
                     center.getX() + 4,
-                    center.getY() + 5 - 58,
+                    center.getY() + 5 + verticalOffset,
                     center.getZ() + 3
                 );
-            Skyrama
-                .getSchematicManager()
-                .setRegionBiome(owner.getName(), islandId, Biome.TAIGA);
             Skyrama
                 .getSchematicManager()
                 .claimRegion(owner.getName(), islandId);

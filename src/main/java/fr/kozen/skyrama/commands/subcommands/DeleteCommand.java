@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
 public class DeleteCommand implements ISubCommand {
@@ -73,11 +74,17 @@ public class DeleteCommand implements ISubCommand {
             }
         }
         if (islandId > 0) {
+            Island island = Island.getIsland(islandId);
+            player.sendMessage("Deleted island: " + islandId);
+            Bukkit.getServer().dispatchCommand(player, "is spawn");
             Skyrama
                 .getSchematicManager()
                 .deleteRegion(player.getName(), islandId);
-            player.sendMessage("Deleted island: " + islandId);
-            Bukkit.getServer().dispatchCommand(player, "island spawn");
+            if (island.biome != Biome.TAIGA) {
+                Skyrama
+                    .getSchematicManager()
+                    .setRegionBiome(player.getName(), islandId, Biome.TAIGA);
+            }
         }
     }
 }

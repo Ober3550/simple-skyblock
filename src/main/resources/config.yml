@@ -23,13 +23,13 @@ general:
     # Adjust the spawn height to the bottom of the world
     spawn:
         X: 0
-        Y: -58
+        Y: 0
         Z: 0
 
 # Island related settings
 island:
-    # The size of the plot and the distance between islands
-    plotsize: 32
+    # The size of the plot (in chunks) and the distance between islands
+    plotsize: 8
 
     # Enable respawn on island when player die
     respawnIsland: true

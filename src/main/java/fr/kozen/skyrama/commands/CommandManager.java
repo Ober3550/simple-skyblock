@@ -36,7 +36,7 @@ public class CommandManager implements CommandExecutor {
         subcommands.add(new ListCommand());
         subcommands.add(new InfoCommand());
 
-        subcommands.add(new DropCommand());
+        // subcommands.add(new DropCommand());
         subcommands.add(new GetIdCommand());
         this.initTabCompleter();
     }

@@ -15,12 +15,14 @@ public class GridManager {
     public void initialise() {}
 
     public Location getCenterFromId(int id) {
-        int plotsize = Integer.parseInt(
-            Skyrama
-                .getPlugin(Skyrama.class)
-                .getConfig()
-                .getString("island.plotsize")
-        );
+        int plotsize =
+            Integer.parseInt(
+                Skyrama
+                    .getPlugin(Skyrama.class)
+                    .getConfig()
+                    .getString("island.plotsize")
+            ) *
+            16;
         int x = 0;
         int z = 0;
         int state = 0;
@@ -56,12 +58,14 @@ public class GridManager {
     }
 
     public int getIdFromLocation(Location location) {
-        int plotsize = Integer.parseInt(
-            Skyrama
-                .getPlugin(Skyrama.class)
-                .getConfig()
-                .getString("island.plotsize")
-        );
+        int plotsize =
+            Integer.parseInt(
+                Skyrama
+                    .getPlugin(Skyrama.class)
+                    .getConfig()
+                    .getString("island.plotsize")
+            ) *
+            16;
         // x = 2, z = 1
         int x = Math.round((float) location.getBlockX() / (float) plotsize);
         int z = Math.round((float) location.getBlockZ() / (float) plotsize);
