@@ -36,56 +36,48 @@ public class DeleteCommand implements ISubCommand {
     @Override
     public void perform(Player player, String[] args) {
         int islandId = 0;
-        if (args.length > 1) {
-            if (player.isOp()) {
-                if ("current".equalsIgnoreCase(args[1])) {
-                    islandId =
-                        Skyrama
-                            .getGridManager()
-                            .getIdFromLocation(player.getLocation());
-                } else {
-                    islandId = Integer.parseInt(args[1]);
-                }
-                player.sendMessage("Deleted island: " + islandId);
+        if (
+            args.length > 1 &&
+            "current".equalsIgnoreCase(args[1]) &&
+            player.isOp()
+        ) {
+            islandId =
                 Skyrama
-                    .getSchematicManager()
-                    .deleteRegion(player.getName(), islandId);
-            }
-        } else {
-            List<IslandUser> islandUsers = IslandUser.getIslandsForPlayer(
-                player.getName()
-            );
-            islandUsers.removeIf(i -> i.rank != Rank.OWNER);
-            if (islandUsers.size() == 1) {
-                islandId = islandUsers.get(0).islandId;
-                Skyrama
-                    .getSchematicManager()
-                    .deleteRegion(player.getName(), islandId);
-                player.sendMessage("Deleted island: " + islandId);
-                Bukkit.getServer().dispatchCommand(player, "island spawn");
-            } else if (islandUsers.size() > 1) {
-                int locationId = Skyrama
                     .getGridManager()
                     .getIdFromLocation(player.getLocation());
-                islandUsers.removeIf(i -> i.islandId != locationId);
-                if (islandUsers.size() == 1) {
-                    islandId = islandUsers.get(0).islandId;
-                    Skyrama
-                        .getSchematicManager()
-                        .deleteRegion(player.getName(), islandId);
-                    player.sendMessage("Deleted island: " + islandId);
-                    Bukkit.getServer().dispatchCommand(player, "island spawn");
-                } else {
-                    player.sendMessage(
-                        ChatColor.RED +
-                        "If you own more than one island stand on the island you own to delete"
-                    );
-                }
+        }
+        List<IslandUser> islandUsers = IslandUser.getIslandsForPlayer(
+            player.getName()
+        );
+        islandUsers.removeIf(i -> i.rank != Rank.OWNER);
+        if (islandUsers.size() == 0) {
+            player.sendMessage(
+                ChatColor.RED + "You don't have an island to delete"
+            );
+            return;
+        } else if (islandUsers.size() == 1) {
+            islandId = islandUsers.get(0).islandId;
+        } else if (islandUsers.size() > 1) {
+            int locationId = Skyrama
+                .getGridManager()
+                .getIdFromLocation(player.getLocation());
+            islandUsers.removeIf(i -> i.islandId != locationId);
+            if (islandUsers.size() == 1) {
+                islandId = islandUsers.get(0).islandId;
             } else {
                 player.sendMessage(
-                    ChatColor.RED + "You don't have an island to delete"
+                    ChatColor.RED +
+                    "If you own more than one island stand on the island you want to delete"
                 );
+                return;
             }
+        }
+        if (islandId > 0) {
+            Skyrama
+                .getSchematicManager()
+                .deleteRegion(player.getName(), islandId);
+            player.sendMessage("Deleted island: " + islandId);
+            Bukkit.getServer().dispatchCommand(player, "island spawn");
         }
     }
 }

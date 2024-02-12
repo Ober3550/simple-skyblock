@@ -5,8 +5,7 @@ import fr.kozen.skyrama.interfaces.ISubCommand;
 import fr.kozen.skyrama.objects.islands.Island;
 import fr.kozen.skyrama.objects.islands.IslandUser;
 import fr.kozen.skyrama.types.Rank;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -29,7 +28,21 @@ public class RemoveCommand implements ISubCommand {
 
     @Override
     public List<String> getArgs(Player player) {
-        return Arrays.asList();
+        List<String> islandMembers = new ArrayList<String>();
+        List<IslandUser> islands = IslandUser.getIslandsForPlayer(
+            player.getName()
+        );
+        islands.removeIf(i -> i.rank != Rank.OWNER);
+        if (islands.size() > 0) {
+            IslandUser owner = islands.get(0);
+            List<IslandUser> targetIslands = IslandUser.getPlayersForIsland(
+                owner.islandId
+            );
+            for (IslandUser user : targetIslands) {
+                islandMembers.add(user.username);
+            }
+        }
+        return islandMembers;
     }
 
     @Override

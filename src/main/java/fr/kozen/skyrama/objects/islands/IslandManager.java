@@ -92,6 +92,9 @@ public class IslandManager {
                 );
             Skyrama
                 .getSchematicManager()
+                .setRegionBiome(owner.getName(), islandId, Biome.TAIGA);
+            Skyrama
+                .getSchematicManager()
                 .claimRegion(owner.getName(), islandId);
             owner.getPlayer().teleport(spawn);
         }

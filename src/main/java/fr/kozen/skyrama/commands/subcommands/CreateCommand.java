@@ -24,7 +24,7 @@ public class CreateCommand implements ISubCommand {
 
     @Override
     public String getSyntax() {
-        return "/is create";
+        return "/is create <optional islandId>";
     }
 
     @Override

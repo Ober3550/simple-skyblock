@@ -24,7 +24,7 @@ public class LeaveCommand implements ISubCommand {
 
     @Override
     public String getSyntax() {
-        return "/is leave";
+        return "/is leave <optional islandId>";
     }
 
     @Override

@@ -219,25 +219,11 @@ public class Island {
                     resultSet.getFloat("spawn_pitch")
                 );
                 Biome biome = Biome.valueOf(resultSet.getString("biome"));
-                Bukkit
-                    .getLogger()
-                    .info(
-                        "Database value of allow_visitors is: " +
-                        resultSet.getString("allow_visitors")
-                    );
                 boolean allowVisitors = "T".equals(
                             resultSet.getString("allow_visitors")
                         )
                     ? true
                     : false;
-                Bukkit
-                    .getLogger()
-                    .info("Successfully loaded island: " + islandId);
-                Bukkit
-                    .getLogger()
-                    .info(
-                        "Boolean value of allow_visitors is: " + allowVisitors
-                    );
                 return new Island(
                     islandId,
                     center,
