@@ -52,7 +52,9 @@ public class DeleteCommand implements ISubCommand {
                     islandId = Integer.parseInt(args[1]);
                 }
                 player.sendMessage("Deleted island: " + islandId);
-                Skyrama.getSchematicManager().deleteRegion(player, islandId);
+                Skyrama
+                    .getSchematicManager()
+                    .deleteRegion(player.getName(), islandId);
             }
         } else {
             List<IslandUser> islandUsers = IslandUser.getIslandsForPlayer(
@@ -61,7 +63,9 @@ public class DeleteCommand implements ISubCommand {
             islandUsers.removeIf(i -> i.rank != Rank.OWNER);
             if (islandUsers.size() == 1) {
                 islandId = islandUsers.get(0).islandId;
-                Skyrama.getSchematicManager().deleteRegion(player, islandId);
+                Skyrama
+                    .getSchematicManager()
+                    .deleteRegion(player.getName(), islandId);
                 player.sendMessage("Deleted island: " + islandId);
                 Bukkit.getServer().dispatchCommand(player, "island spawn");
             } else if (islandUsers.size() > 1) {
@@ -73,7 +77,7 @@ public class DeleteCommand implements ISubCommand {
                     islandId = islandUsers.get(0).islandId;
                     Skyrama
                         .getSchematicManager()
-                        .deleteRegion(player, islandId);
+                        .deleteRegion(player.getName(), islandId);
                     player.sendMessage("Deleted island: " + islandId);
                     Bukkit.getServer().dispatchCommand(player, "island spawn");
                 } else {

@@ -65,6 +65,11 @@ public class IslandUser {
             stmt.setInt(2, this.islandId);
             stmt.setInt(3, this.rank.getValue());
             stmt.execute();
+            if (this.rank == Rank.MEMBER) {
+                Skyrama
+                    .getSchematicManager()
+                    .addMemberToRegion(this.username, this.islandId);
+            }
         } catch (SQLException e) {
             Bukkit.getLogger().info("Something went wrong. " + e);
         }
@@ -80,6 +85,11 @@ public class IslandUser {
             stmt.setInt(2, this.islandId);
             stmt.setInt(3, this.rank.getValue());
             stmt.execute();
+            if (this.rank == Rank.MEMBER) {
+                Skyrama
+                    .getSchematicManager()
+                    .removeMemberFromRegion(this.username, this.islandId);
+            }
         } catch (SQLException e) {
             Bukkit.getLogger().info("Something went wrong. " + e);
         }

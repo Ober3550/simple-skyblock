@@ -90,7 +90,9 @@ public class IslandManager {
                     center.getY() + 5 - 58,
                     center.getZ() + 3
                 );
-            Skyrama.getSchematicManager().claimRegion(owner, islandId);
+            Skyrama
+                .getSchematicManager()
+                .claimRegion(owner.getName(), islandId);
             owner.getPlayer().teleport(spawn);
         }
     }

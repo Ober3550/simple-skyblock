@@ -41,40 +41,47 @@ public class InfoCommand implements ISubCommand {
         int islandId = Skyrama
             .getGridManager()
             .getIdFromLocation(player.getLocation());
-        Island island = Island.getIsland(islandId);
-        List<IslandUser> islandList = IslandUser.getPlayersForIsland(islandId);
-        player.sendMessage("Info for island: " + islandId);
-        player.sendMessage(
-            "Centered on: " +
-            island.center.getX() +
-            "x " +
-            island.center.getY() +
-            "y " +
-            island.center.getZ() +
-            "z"
-        );
-        player.sendMessage(
-            "Home on: " +
-            island.spawn.getX() +
-            "x " +
-            island.spawn.getY() +
-            "y " +
-            island.spawn.getZ() +
-            "z"
-        );
-        player.sendMessage("Biome: " + String.valueOf(island.biome));
-        player.sendMessage(
-            "Allow Visitors: " + (island.allowVisitors ? "enabled" : "disabled")
-        );
-        for (IslandUser islandUser : islandList) {
-            player.sendMessage(
-                "User: " +
-                islandUser.username +
-                " Island: " +
-                islandUser.islandId +
-                " Rank: " +
-                islandUser.rank
+        if (islandId == 0) {
+            player.sendMessage("World Spawn");
+        } else {
+            Island island = Island.getIsland(islandId);
+            List<IslandUser> islandList = IslandUser.getPlayersForIsland(
+                islandId
             );
+            player.sendMessage("Info for island: " + islandId);
+            player.sendMessage(
+                "Centered on: " +
+                island.center.getX() +
+                "x " +
+                island.center.getY() +
+                "y " +
+                island.center.getZ() +
+                "z"
+            );
+            player.sendMessage(
+                "Home on: " +
+                island.spawn.getX() +
+                "x " +
+                island.spawn.getY() +
+                "y " +
+                island.spawn.getZ() +
+                "z"
+            );
+            player.sendMessage("Biome: " + String.valueOf(island.biome));
+            player.sendMessage(
+                "Allow Visitors: " +
+                (island.allowVisitors ? "enabled" : "disabled")
+            );
+            for (IslandUser islandUser : islandList) {
+                player.sendMessage(
+                    "User: " +
+                    islandUser.username +
+                    " Island: " +
+                    islandUser.islandId +
+                    " Rank: " +
+                    islandUser.rank
+                );
+            }
         }
     }
 }

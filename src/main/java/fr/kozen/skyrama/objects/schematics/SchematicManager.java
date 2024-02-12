@@ -26,7 +26,6 @@ import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class SchematicManager {
@@ -100,7 +99,7 @@ public class SchematicManager {
         }
     }
 
-    public void claimRegion(Player player, int islandId) {
+    public void selectRegion(String username, int islandId) {
         FileConfiguration config = Skyrama.getPlugin(Skyrama.class).getConfig();
         String worldString = config.getString("general.world");
         World world = Bukkit.getWorld(worldString);
@@ -141,70 +140,56 @@ public class SchematicManager {
             "," +
             end.getBlockZ()
         );
-        server.dispatchCommand(
-            Bukkit.getConsoleSender(),
-            "rg define island" + islandId + " " + player.getName()
-        );
-        try {
-            Thread.sleep(100);
-        } catch (Exception e) {}
-        server.dispatchCommand(
-            Bukkit.getConsoleSender(),
-            "rg flag island" +
-            islandId +
-            " greeting Welcome to " +
-            player.getName() +
-            "'s Island!"
-        );
     }
 
-    public void deleteRegion(Player player, int islandId) {
+    public void claimRegion(String username, int islandId) {
         if (islandId > 0) {
-            FileConfiguration config = Skyrama
-                .getPlugin(Skyrama.class)
-                .getConfig();
-            String worldString = config.getString("general.world");
-            World world = Bukkit.getWorld(worldString);
-
-            int offset =
-                Integer.parseInt(config.getString("island.plotsize")) / 2;
-            Location center = Skyrama
-                .getGridManager()
-                .getCenterFromId(islandId);
-            BlockVector3 start = BlockVector3.at(
-                center.getBlockX() - offset,
-                -64,
-                center.getBlockZ() - offset
-            );
-            BlockVector3 end = BlockVector3.at(
-                center.getBlockX() + offset,
-                320,
-                center.getBlockZ() + offset
-            );
-
+            selectRegion(username, islandId);
             Server server = Bukkit.getServer();
             server.dispatchCommand(
                 Bukkit.getConsoleSender(),
-                "/world " + worldString
+                "rg define island" + islandId + " " + username
             );
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {}
             server.dispatchCommand(
                 Bukkit.getConsoleSender(),
-                "/pos1 " +
-                start.getBlockX() +
-                "," +
-                start.getBlockY() +
-                "," +
-                start.getBlockZ()
+                "rg flag island" +
+                islandId +
+                " greeting Welcome to " +
+                username +
+                "'s Island!"
             );
+        }
+    }
+
+    public void addMemberToRegion(String username, int islandId) {
+        if (islandId > 0) {
+            selectRegion(username, islandId);
+            Server server = Bukkit.getServer();
             server.dispatchCommand(
                 Bukkit.getConsoleSender(),
-                "/pos2 " +
-                end.getBlockX() +
-                "," +
-                end.getBlockY() +
-                "," +
-                end.getBlockZ()
+                "rg addmember island" + islandId + " " + username
             );
+        }
+    }
+
+    public void removeMemberFromRegion(String username, int islandId) {
+        if (islandId > 0) {
+            selectRegion(username, islandId);
+            Server server = Bukkit.getServer();
+            server.dispatchCommand(
+                Bukkit.getConsoleSender(),
+                "rg removemember island" + islandId + " " + username
+            );
+        }
+    }
+
+    public void deleteRegion(String username, int islandId) {
+        if (islandId > 0) {
+            selectRegion(username, islandId);
+            Server server = Bukkit.getServer();
             server.dispatchCommand(Bukkit.getConsoleSender(), "/set 0");
             server.dispatchCommand(
                 Bukkit.getConsoleSender(),
