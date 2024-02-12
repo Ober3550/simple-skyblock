@@ -101,49 +101,4 @@ public class GridManager {
         }
         return 0;
     }
-
-    public int isInPlayerIsland(Player player, Location location) {
-        if (
-            location.getWorld() ==
-            Bukkit.getWorld(
-                Skyrama
-                    .getPlugin(Skyrama.class)
-                    .getConfig()
-                    .getString("general.world")
-            )
-        ) {
-            if (Skyrama.getIslandManager().getPlayerIsland(player) != null) {
-                Island island = Skyrama
-                    .getIslandManager()
-                    .getPlayerIsland(player);
-                Location center = getCenterFromId(island.getId());
-                int plotsize = Integer.parseInt(
-                    Skyrama
-                        .getPlugin(Skyrama.class)
-                        .getConfig()
-                        .getString("island.plotsize")
-                );
-
-                int minX = center.getBlockX() - plotsize;
-                int maxX = center.getBlockX() + plotsize;
-
-                int minZ = center.getBlockZ() - plotsize;
-                int maxZ = center.getBlockZ() + plotsize;
-
-                if (
-                    location.getBlockX() >= minX && location.getBlockX() <= maxX
-                ) {
-                    if (
-                        location.getBlockZ() >= minZ &&
-                        location.getBlockZ() <= maxZ
-                    ) {
-                        return 2;
-                    }
-                }
-                return 1;
-            }
-            return 1;
-        }
-        return 0;
-    }
 }

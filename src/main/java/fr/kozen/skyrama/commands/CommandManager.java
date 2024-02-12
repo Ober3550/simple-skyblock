@@ -19,16 +19,24 @@ public class CommandManager implements CommandExecutor {
 
     public CommandManager() {
         subcommands.add(new SpawnCommand());
+
         subcommands.add(new CreateCommand());
         subcommands.add(new DeleteCommand());
+
         subcommands.add(new HomeCommand());
         subcommands.add(new SetHomeCommand());
+
         subcommands.add(new VisitCommand());
+        subcommands.add(new AllowVisitorsCommand());
+
         subcommands.add(new InviteCommand());
         subcommands.add(new LeaveCommand());
+        subcommands.add(new RemoveCommand());
+        subcommands.add(new ListCommand());
+        subcommands.add(new InfoCommand());
+
         subcommands.add(new DropCommand());
         subcommands.add(new GetIdCommand());
-
         this.initTabCompleter();
     }
 

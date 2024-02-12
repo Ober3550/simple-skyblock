@@ -3,12 +3,11 @@ package fr.kozen.skyrama.commands.subcommands;
 import fr.kozen.skyrama.Skyrama;
 import fr.kozen.skyrama.interfaces.ISubCommand;
 import fr.kozen.skyrama.objects.islands.Island;
+import fr.kozen.skyrama.objects.islands.IslandUser;
 import fr.kozen.skyrama.types.Rank;
 import java.util.Arrays;
 import java.util.List;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class LeaveCommand implements ISubCommand {
@@ -40,49 +39,49 @@ public class LeaveCommand implements ISubCommand {
 
     @Override
     public void perform(Player player, String[] args) {
-        Island island = Skyrama.getIslandManager().getPlayerIsland(player);
-
-        if (island != null) {
-            if (island.getRank(player).equals(Rank.OWNER)) {
-                island.removePlayer(player);
-                player.sendMessage(ChatColor.GREEN + "You left your island");
-                for (OfflinePlayer offlinePlayer : island
-                    .getPlayers()
-                    .keySet()) {
-                    if (offlinePlayer.isOnline()) {
-                        Player member = offlinePlayer.getPlayer();
-                        member.sendMessage(
-                            ChatColor.RED +
-                            "" +
-                            player.getName() +
-                            " deleted the island."
-                        );
-                        island.removePlayer(member);
-                    }
+        List<IslandUser> islands = IslandUser.getIslandsForPlayer(
+            player.getName()
+        );
+        if (islands.size() == 1) {
+            IslandUser islandUser = islands.get(0);
+            if (islandUser.rank == Rank.OWNER) {
+                player.sendMessage(
+                    ChatColor.RED + "Island owners cannot leave. Use /is delete"
+                );
+            } else {
+                islandUser.delete();
+                player.sendMessage(
+                    ChatColor.GREEN + "Successfully left island"
+                );
+            }
+        } else if (islands.size() > 1) {
+            islands.removeIf(i -> i.rank == Rank.OWNER);
+            if (args.length > 1) {
+                int islandId = Integer.parseInt(args[1]);
+                islands.removeIf(i -> i.islandId != islandId);
+                if (islands.size() == 1) {
+                    islands.get(0).delete();
+                } else {
+                    player.sendMessage(
+                        ChatColor.RED +
+                        "You are not part of island: " +
+                        islandId
+                    );
                 }
             } else {
-                island.removePlayer(player);
-                player.sendMessage(
-                    ChatColor.GREEN + "You left the island with success."
-                );
-                for (OfflinePlayer offlinePlayer : island
-                    .getPlayers()
-                    .keySet()) {
-                    if (offlinePlayer.isOnline()) {
-                        Player member = offlinePlayer.getPlayer();
-                        member.sendMessage(
-                            ChatColor.RED +
-                            "" +
-                            player.getName() +
-                            " left your island."
-                        );
-                    }
+                for (IslandUser islandUser : islands) {
+                    player.sendMessage(
+                        "User: " +
+                        islandUser.username +
+                        " Island: " +
+                        islandUser.islandId +
+                        " Rank: " +
+                        islandUser.rank
+                    );
                 }
             }
         } else {
-            player.sendMessage(
-                Skyrama.getLocaleManager().getString("player-no-island")
-            );
+            player.sendMessage(ChatColor.RED + "You aren't part of an island");
         }
     }
 }

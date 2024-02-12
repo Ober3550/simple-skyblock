@@ -3,7 +3,7 @@ package fr.kozen.skyrama.types;
 public enum Rank {
     OWNER(2),
     MEMBER(1),
-    GUEST(0);
+    INVITED(0);
 
     public final int rank;
 
@@ -18,7 +18,7 @@ public enum Rank {
             case 1:
                 return MEMBER;
             default:
-                return GUEST;
+                return INVITED;
         }
     }
 

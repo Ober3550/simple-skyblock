@@ -2,7 +2,7 @@ package fr.kozen.skyrama.objects.islands;
 
 import fr.kozen.skyrama.Skyrama;
 import fr.kozen.skyrama.objects.islands.Island;
-import fr.kozen.skyrama.storage.queries.IslandDao;
+import fr.kozen.skyrama.objects.islands.IslandUser;
 import fr.kozen.skyrama.types.Rank;
 import java.util.*;
 import org.bukkit.Bukkit;
@@ -16,8 +16,7 @@ public class IslandManager {
 
     public IslandManager() {}
 
-    public void create(Player owner) {
-        int islandId = IslandDao.getNextId();
+    public void createIsland(Player owner, int islandId) {
         if (islandId > 0) {
             owner
                 .getPlayer()
@@ -67,10 +66,22 @@ public class IslandManager {
                     "z"
                 );
 
-            Island island = new Island(islandId, center, spawn, Biome.TAIGA);
-            island.addPlayer(owner, Rank.OWNER);
-            island.setSpawn(spawn);
+            Island island = new Island(
+                islandId,
+                center,
+                spawn,
+                Biome.TAIGA,
+                true
+            );
+            Island.create(islandId);
             island.save();
+
+            IslandUser islandUser = new IslandUser(
+                owner.getName(),
+                islandId,
+                Rank.OWNER
+            );
+            islandUser.create();
 
             Skyrama
                 .getSchematicManager()
@@ -82,10 +93,5 @@ public class IslandManager {
             Skyrama.getSchematicManager().claimRegion(owner, islandId);
             owner.getPlayer().teleport(spawn);
         }
-    }
-
-    public Island getPlayerIsland(Player player) {
-        int islandId = IslandDao.getPlayerIsland(player);
-        return IslandDao.getIsland(islandId);
     }
 }

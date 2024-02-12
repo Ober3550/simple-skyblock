@@ -3,6 +3,7 @@ package fr.kozen.skyrama.commands.subcommands;
 import fr.kozen.skyrama.Skyrama;
 import fr.kozen.skyrama.interfaces.ISubCommand;
 import fr.kozen.skyrama.objects.islands.Island;
+import fr.kozen.skyrama.objects.islands.IslandUser;
 import fr.kozen.skyrama.types.Rank;
 import java.util.Arrays;
 import java.util.List;
@@ -37,186 +38,116 @@ public class InviteCommand implements ISubCommand {
 
     @Override
     public List<String> getArgs() {
-        return Arrays.asList("add", "accept", "deny");
+        return Arrays.asList("add", "accept");
     }
 
     @Override
     public void perform(Player player, String[] args) {
         if (args.length < 3) {
             player.sendMessage(
-                Skyrama
-                    .getLocaleManager()
-                    .getString("invalid-syntax")
-                    .replace(
-                        "{0}",
-                        "/island invite <add | accept | deny> <player>"
-                    )
+                ChatColor.RED +
+                "Invalid syntax: /island invite <add | accept> <player>"
             );
             return;
         }
 
-        Island island = Skyrama.getIslandManager().getPlayerIsland(player);
         Player target = Bukkit.getPlayer(args[2]);
-
         if (target == null) {
-            player.sendMessage(
-                Skyrama
-                    .getLocaleManager()
-                    .getString("player-offline")
-                    .replace("{0}", args[1])
-            );
+            player.sendMessage("Could not find: " + args[2]);
             return;
         }
 
-        if (Objects.equals(args[1], "add")) {
-            if (island != null) {
-                if (island.getRank(player) == Rank.OWNER) {
-                    if (
-                        Skyrama.getIslandManager().getPlayerIsland(target) !=
-                        null &&
-                        Skyrama.getIslandManager().getPlayerIsland(target) ==
-                        island
-                    ) {
-                        player.sendMessage(
-                            Skyrama
-                                .getLocaleManager()
-                                .getString("player-already-on-island")
-                                .replace("{0}", target.getName())
-                        );
-                        return;
-                    }
+        if ("add".equals(args[1])) {
+            List<IslandUser> islandUsers = IslandUser.getIslandsForPlayer(
+                player.getName()
+            );
+            islandUsers.removeIf(i -> i.rank != Rank.OWNER);
+            if (islandUsers.size() > 0) {
+                IslandUser owner = islandUsers.get(0);
+                List<IslandUser> existingInvites = IslandUser.getIslandsForPlayer(
+                    target.getName()
+                );
+                existingInvites.removeIf(i -> i.islandId != owner.islandId);
+                if (existingInvites.size() == 0) {
+                    target.sendMessage(
+                        ChatColor.GRAY +
+                        player.getName() +
+                        " invited you to play on their island! "
+                    );
+                    TextComponent messageYes = new TextComponent(
+                        ChatColor.GREEN + "[ACCEPT] "
+                    );
+                    messageYes.setClickEvent(
+                        new ClickEvent(
+                            ClickEvent.Action.RUN_COMMAND,
+                            "/is invite accept " + player.getName()
+                        )
+                    );
 
-                    if (
-                        island.getInvites() != null &&
-                        island.getInvites().get(target) == null
-                    ) {
-                        player.sendMessage(
-                            ChatColor.GREEN +
-                            "Sending an invitation to " +
-                            target.getName() +
-                            "..."
-                        );
-                        target.sendMessage(ChatColor.GREEN + " ");
-                        target.sendMessage(
-                            ChatColor.GRAY +
-                            player.getName() +
-                            " invited you to play on his island? If you accept your island will be deleted."
-                        );
-                        target.sendMessage(ChatColor.GREEN + " ");
-
-                        TextComponent messageYes = new TextComponent(
-                            ChatColor.GREEN + "[ACCEPT]"
-                        );
-                        messageYes.setClickEvent(
-                            new ClickEvent(
-                                ClickEvent.Action.RUN_COMMAND,
-                                "/island accept " + player.getName()
-                            )
-                        );
-
-                        TextComponent messageNo = new TextComponent(
-                            ChatColor.RED + "[DECLINE] "
-                        );
-                        messageNo.setClickEvent(
-                            new ClickEvent(
-                                ClickEvent.Action.RUN_COMMAND,
-                                "/island deny " + player.getName()
-                            )
-                        );
-
-                        messageYes.addExtra(" ");
-                        messageYes.addExtra(messageNo);
-
-                        target.spigot().sendMessage(messageYes);
-                        target.sendMessage(ChatColor.GREEN + " ");
-
-                        island.getInvites().put(target, player);
-                    } else {
-                        player.sendMessage(
-                            Skyrama
-                                .getLocaleManager()
-                                .getString("player-already-invited")
-                                .replace(
-                                    "{0}",
-                                    island.getInvites().get(target).getName()
-                                )
-                                .replace("{1}", target.getName())
-                        );
-                    }
+                    TextComponent messageNo = new TextComponent(
+                        ChatColor.RED + "[DECLINE] "
+                    );
+                    messageNo.setClickEvent(
+                        new ClickEvent(
+                            ClickEvent.Action.RUN_COMMAND,
+                            "/is invite decline " + player.getName()
+                        )
+                    );
+                    IslandUser invite = new IslandUser(
+                        target.getName(),
+                        owner.islandId,
+                        Rank.INVITED
+                    );
+                    invite.create();
+                    player.sendMessage(
+                        ChatColor.GRAY + "Sent invite to: " + target.getName()
+                    );
+                    messageYes.addExtra(messageNo);
+                    target.spigot().sendMessage(messageYes);
                 } else {
                     player.sendMessage(
-                        Skyrama.getLocaleManager().getString("player-no-owner")
+                        ChatColor.RED +
+                        target.getName() +
+                        " has already been invited or is already part of the island"
                     );
                 }
             } else {
                 player.sendMessage(
-                    Skyrama.getLocaleManager().getString("player-no-island")
+                    ChatColor.RED +
+                    "You don't have an island to invite someone to"
                 );
             }
-        } else if (Objects.equals(args[1], "accept")) {
-            Island newIsland = Skyrama
-                .getIslandManager()
-                .getPlayerIsland(target);
-
-            if (
-                !newIsland.getInvites().isEmpty() &&
-                newIsland.getInvites().get(player) != null
-            ) {
-                if (island != null) {
-                    island.removePlayer(player);
-                    newIsland.addPlayer(player, Rank.fromInt(1));
+        } else if ("accept".equals(args[1])) {
+            List<IslandUser> islandUsers = IslandUser.getIslandsForPlayer(
+                args[2]
+            );
+            islandUsers.removeIf(i -> i.rank != Rank.OWNER);
+            if (islandUsers.size() > 0) {
+                IslandUser ownerIsland = islandUsers.get(0);
+                List<IslandUser> invitedCheck = IslandUser.getIslandsForPlayer(
+                    player.getName()
+                );
+                invitedCheck.removeIf(i ->
+                    i.rank != Rank.INVITED || i.islandId != ownerIsland.islandId
+                );
+                if (invitedCheck.size() > 0) {
+                    invitedCheck.get(0).delete();
+                    IslandUser newIslandUser = new IslandUser(
+                        player.getName(),
+                        ownerIsland.islandId,
+                        Rank.MEMBER
+                    );
+                    newIslandUser.create();
+                    player.sendMessage("Accepted invite!");
+                } else {
+                    player.sendMessage(
+                        ChatColor.RED +
+                        "You can't accept an invite you never received"
+                    );
                 }
-
-                newIsland.addPlayer(player, Rank.fromInt(1));
-
-                target.sendMessage(
-                    Skyrama
-                        .getLocaleManager()
-                        .getString("player-join-island")
-                        .replace("{0}", player.getName())
-                );
-
-                player.sendMessage(
-                    Skyrama
-                        .getLocaleManager()
-                        .getString("player-join-island-success")
-                        .replace("{0}", target.getName())
-                );
-                player.performCommand("is home");
-            } else {
-                player.sendMessage(
-                    Skyrama
-                        .getLocaleManager()
-                        .getString("player-no-invited")
-                        .replace("{0}", args[1])
-                );
             }
-        } else if (Objects.equals(args[1], "deny")) {
-            if (
-                !island.getInvites().isEmpty() &&
-                island.getInvites().get(player) != null
-            ) {
-                island.getInvites().remove(player);
-                player.sendMessage(
-                    Skyrama
-                        .getLocaleManager()
-                        .getString("player-decline-invitation")
-                        .replace("{0}", target.getName())
-                );
-                target.sendMessage(
-                    Skyrama
-                        .getLocaleManager()
-                        .getString("player-decline-your-invitation")
-                        .replace("{0}", player.getName())
-                );
-            } else {
-                player.sendMessage(
-                    Skyrama
-                        .getLocaleManager()
-                        .getString("player-no-invited")
-                        .replace("{0}", args[1])
-                );
-            }
+        } else if ("decline".equals(args[1])) {
+            player.sendMessage("You declined their invite");
         }
     }
 }

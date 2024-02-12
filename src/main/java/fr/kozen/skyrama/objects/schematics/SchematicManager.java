@@ -14,7 +14,8 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import fr.kozen.skyrama.Skyrama;
-import fr.kozen.skyrama.storage.queries.IslandDao;
+import fr.kozen.skyrama.objects.islands.Island;
+import fr.kozen.skyrama.objects.islands.IslandUser;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -209,7 +210,7 @@ public class SchematicManager {
                 Bukkit.getConsoleSender(),
                 "rg delete island" + islandId
             );
-            IslandDao.removeIsland(islandId);
+            Island.delete(islandId);
         }
     }
 }
