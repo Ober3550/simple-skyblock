@@ -36,3 +36,5 @@ This plugin was originally made for `Spigot 1.19` but you can totally edit it to
 | `/is invite add <Player>`    | Invite player to be island member. |
 | `/is invite accept <Player>` | Accept the player invitation.             |
 | `/is invite decline <Player>`   | Decline the player invitation.            |
+| `/is leave <islandId>`   | Leave island membership. |
+| `/is remove <Player>`   | Remove player membership. |
