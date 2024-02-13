@@ -25,7 +25,6 @@ public class IslandManager {
             int verticalOffset = Integer.parseInt(
                 config.getString("general.spawn.Y")
             );
-
             Location center = Skyrama
                 .getGridManager()
                 .getCenterFromId(islandId);
@@ -50,15 +49,16 @@ public class IslandManager {
                 center.getZ()
             );
 
-            // Island island = new Island(islandId, center, spawn, true);
-            // Island.create(islandId);
-            // island.save();
-            // IslandUser islandUser = new IslandUser(
-            //     owner.getName(),
-            //     islandId,
-            //     Rank.OWNER
-            // );
-            // islandUser.create();
+            Island island = new Island(islandId, center, spawn, true);
+            Island.create(islandId);
+            island.save();
+            IslandUser islandUser = new IslandUser(
+                owner.getName(),
+                islandId,
+                Rank.OWNER
+            );
+            islandUser.create();
+
             Skyrama
                 .getSchematicManager()
                 .createIsland(owner, schematicLocation);
