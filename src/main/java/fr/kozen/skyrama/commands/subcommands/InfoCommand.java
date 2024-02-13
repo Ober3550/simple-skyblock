@@ -39,37 +39,40 @@ public class InfoCommand implements ISubCommand {
             player.sendMessage("World Spawn");
         } else {
             Island island = Island.getIsland(islandId);
-            List<IslandUser> islandList = IslandUser.getPlayersForIsland(
-                islandId
-            );
-            DecimalFormat decimals = new DecimalFormat("0.##");
             player.sendMessage("Island Id: " + islandId);
-            player.sendMessage(
-                "Center: " +
-                decimals.format(island.center.getX()) +
-                "x " +
-                decimals.format(island.center.getY()) +
-                "y " +
-                decimals.format(island.center.getZ()) +
-                "z"
-            );
-            player.sendMessage(
-                "Home: " +
-                decimals.format(island.spawn.getX()) +
-                "x " +
-                decimals.format(island.spawn.getY()) +
-                "y " +
-                decimals.format(island.spawn.getZ()) +
-                "z"
-            );
-            player.sendMessage(
-                "Visitors: " + (island.allowVisitors ? "enabled" : "disabled")
-            );
-            player.sendMessage("Members:");
-            for (IslandUser islandUser : islandList) {
-                player.sendMessage(
-                    islandUser.username + " Rank: " + islandUser.rank
+            if (island != null) {
+                List<IslandUser> islandList = IslandUser.getPlayersForIsland(
+                    islandId
                 );
+                DecimalFormat decimals = new DecimalFormat("0.##");
+                player.sendMessage(
+                    "Center: " +
+                    decimals.format(island.center.getX()) +
+                    "x " +
+                    decimals.format(island.center.getY()) +
+                    "y " +
+                    decimals.format(island.center.getZ()) +
+                    "z"
+                );
+                player.sendMessage(
+                    "Home: " +
+                    decimals.format(island.spawn.getX()) +
+                    "x " +
+                    decimals.format(island.spawn.getY()) +
+                    "y " +
+                    decimals.format(island.spawn.getZ()) +
+                    "z"
+                );
+                player.sendMessage(
+                    "Visitors: " +
+                    (island.allowVisitors ? "enabled" : "disabled")
+                );
+                player.sendMessage("Members:");
+                for (IslandUser islandUser : islandList) {
+                    player.sendMessage(
+                        islandUser.username + " Rank: " + islandUser.rank
+                    );
+                }
             }
         }
     }

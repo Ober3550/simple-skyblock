@@ -44,6 +44,19 @@ public class DeleteCommand implements ISubCommand {
                 Skyrama
                     .getGridManager()
                     .getIdFromLocation(player.getLocation());
+            if (islandId > 0) {
+                Island island = Island.getIsland(islandId);
+                player.sendMessage("Deleted island: " + islandId);
+                if (
+                    Skyrama.getGridManager().playerIsOnIsland(player, islandId)
+                ) {
+                    Bukkit.getServer().dispatchCommand(player, "is spawn");
+                }
+                Skyrama
+                    .getSchematicManager()
+                    .deleteRegion(player.getName(), islandId);
+            }
+            return;
         }
         List<IslandUser> islandUsers = IslandUser.getIslandsForPlayer(
             player.getName()

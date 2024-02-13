@@ -134,13 +134,6 @@ public class Island {
             while (rs.next()) {
                 id = rs.getInt("missing");
             }
-            if (id > 0) {
-                PreparedStatement createStmt = conn.prepareStatement(
-                    "INSERT INTO islands(id) VALUES(?);"
-                );
-                createStmt.setInt(1, id);
-                createStmt.executeUpdate();
-            }
             return id;
         } catch (SQLException e) {
             Bukkit.getLogger().info("Something went wrong. " + e);

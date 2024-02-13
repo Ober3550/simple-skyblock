@@ -22,11 +22,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Objects;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class SchematicManager {
@@ -41,11 +43,15 @@ public class SchematicManager {
             .getPlugin("WorldEdit");
     }
 
-    public void createIsland(double x, double y, double z) {
+    public void createIsland(Player player, Location location) {
         try {
+            String sep = File.separator;
             String filepath =
                 Skyrama.getPlugin(Skyrama.class).getDataFolder() +
-                "\\schematics\\island.schem";
+                sep +
+                "schematics" +
+                sep +
+                "island.schem";
             File file = new File(filepath);
             Bukkit.getLogger().info("Loading schematic from: " + filepath);
             if (file.exists()) {
@@ -54,46 +60,47 @@ public class SchematicManager {
                     Files.newInputStream(file.toPath())
                 );
                 Clipboard clipboard = reader.read();
-                try (
+                player.sendMessage(ChatColor.GREEN + "Loaded island schematic");
+                try {
                     EditSession editSession = WorldEdit
                         .getInstance()
                         .getEditSessionFactory()
                         .getEditSession(
-                            BukkitAdapter.adapt(
-                                Objects.requireNonNull(
-                                    Bukkit.getWorld(
-                                        (String) Skyrama
-                                            .getPlugin(Skyrama.class)
-                                            .getConfig()
-                                            .get("general.world")
-                                    )
-                                )
-                            ),
+                            BukkitAdapter.adapt(player.getWorld()),
                             -1
-                        )
-                ) {
+                        );
                     Operation operation = new ClipboardHolder(clipboard)
                         .createPaste(editSession)
                         .to(
                             BlockVector3.at(
-                                x -
-                                Math.floor(
-                                    clipboard.getDimensions().getX() / 2
-                                ),
-                                y -
-                                Math.floor(
-                                    clipboard.getDimensions().getY() / 2
-                                ),
-                                z -
-                                Math.floor(clipboard.getDimensions().getZ() / 2)
+                                location.getBlockX(),
+                                location.getBlockY(),
+                                location.getBlockZ()
                             )
                         )
                         .ignoreAirBlocks(false)
                         .build();
                     Operations.complete(operation);
+                    player.sendMessage(
+                        ChatColor.GREEN +
+                        "Placed island at: " +
+                        location.getBlockX() +
+                        "x " +
+                        location.getBlockY() +
+                        "y " +
+                        location.getBlockZ() +
+                        "z"
+                    );
                 } catch (WorldEditException e) {
+                    player.sendMessage(
+                        ChatColor.RED + "Failed to place island schematic"
+                    );
                     e.printStackTrace();
                 }
+            } else {
+                player.sendMessage(
+                    ChatColor.RED + "Failed to load island schematic"
+                );
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -152,9 +159,6 @@ public class SchematicManager {
                 Bukkit.getConsoleSender(),
                 "rg define island" + islandId + " " + username
             );
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {}
             server.dispatchCommand(
                 Bukkit.getConsoleSender(),
                 "rg flag island" +
