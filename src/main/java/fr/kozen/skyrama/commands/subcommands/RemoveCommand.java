@@ -49,7 +49,7 @@ public class RemoveCommand implements ISubCommand {
     public void perform(Player player, String[] args) {
         if (args.length != 2) {
             player.sendMessage(
-                ChatColor.RED + "Invalid syntax: " + getSyntax()
+                ChatColor.RED + "Invalid syntax use: " + getSyntax()
             );
             return;
         }
@@ -79,7 +79,7 @@ public class RemoveCommand implements ISubCommand {
                 }
             } else {
                 player.sendMessage(
-                    ChatColor.RED + "Player is not part of this island"
+                    ChatColor.RED + "Player is not member of this island"
                 );
             }
         } else {

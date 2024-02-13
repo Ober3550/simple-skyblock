@@ -2,8 +2,7 @@ package fr.kozen.skyrama.commands.subcommands;
 
 import fr.kozen.skyrama.Skyrama;
 import fr.kozen.skyrama.interfaces.ISubCommand;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;

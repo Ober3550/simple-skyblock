@@ -1,6 +1,6 @@
 package fr.kozen.skyrama.interfaces;
 
-import java.util.List;
+import java.util.*;
 import org.bukkit.entity.Player;
 
 public interface ISubCommand {

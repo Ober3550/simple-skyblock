@@ -5,11 +5,9 @@ import fr.kozen.skyrama.interfaces.ISubCommand;
 import fr.kozen.skyrama.objects.islands.Island;
 import fr.kozen.skyrama.objects.islands.IslandUser;
 import fr.kozen.skyrama.types.Rank;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
 public class DeleteCommand implements ISubCommand {
@@ -76,15 +74,12 @@ public class DeleteCommand implements ISubCommand {
         if (islandId > 0) {
             Island island = Island.getIsland(islandId);
             player.sendMessage("Deleted island: " + islandId);
-            Bukkit.getServer().dispatchCommand(player, "is spawn");
+            if (Skyrama.getGridManager().playerIsOnIsland(player, islandId)) {
+                Bukkit.getServer().dispatchCommand(player, "is spawn");
+            }
             Skyrama
                 .getSchematicManager()
                 .deleteRegion(player.getName(), islandId);
-            if (island.biome != Biome.TAIGA) {
-                Skyrama
-                    .getSchematicManager()
-                    .setRegionBiome(player.getName(), islandId, Biome.TAIGA);
-            }
         }
     }
 }

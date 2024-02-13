@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Biome;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -25,27 +24,10 @@ public class IslandManager {
             int verticalOffset = Integer.parseInt(
                 config.getString("general.spawn.Y")
             );
-            owner
-                .getPlayer()
-                .sendMessage(
-                    ChatColor.GREEN + "Creating island id: " + islandId
-                );
+
             Location center = Skyrama
                 .getGridManager()
                 .getCenterFromId(islandId);
-
-            owner
-                .getPlayer()
-                .sendMessage(
-                    ChatColor.GREEN +
-                    "At location centred on: " +
-                    center.getX() +
-                    "x " +
-                    center.getY() +
-                    "y " +
-                    center.getZ() +
-                    "z"
-                );
             int test;
 
             Location spawn = new Location(
@@ -55,41 +37,20 @@ public class IslandManager {
                         .getConfig()
                         .getString("general.world")
                 ),
-                center.getBlockX() + 1.5,
-                center.getBlockY() + verticalOffset,
-                center.getBlockZ() - 1.5
+                center.getX() + 1.5,
+                center.getY() + verticalOffset,
+                center.getZ() - 1.5
             );
 
-            owner
-                .getPlayer()
-                .sendMessage(
-                    ChatColor.GREEN +
-                    "Setting island home to: " +
-                    spawn.getX() +
-                    "x " +
-                    spawn.getY() +
-                    "y " +
-                    spawn.getZ() +
-                    "z"
-                );
-
-            Island island = new Island(
-                islandId,
-                center,
-                spawn,
-                Biome.TAIGA,
-                true
-            );
+            Island island = new Island(islandId, center, spawn, true);
             Island.create(islandId);
             island.save();
-
             IslandUser islandUser = new IslandUser(
                 owner.getName(),
                 islandId,
                 Rank.OWNER
             );
             islandUser.create();
-
             Skyrama
                 .getSchematicManager()
                 .createIsland(
@@ -101,6 +62,7 @@ public class IslandManager {
                 .getSchematicManager()
                 .claimRegion(owner.getName(), islandId);
             owner.getPlayer().teleport(spawn);
+            owner.sendMessage(ChatColor.GREEN + "Created island: " + islandId);
         }
     }
 }

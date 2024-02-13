@@ -42,39 +42,43 @@ public class SetBiomeCommand implements ISubCommand {
     @Override
     public void perform(Player player, String[] args) {
         if (args.length != 2) {
-            player.sendMessage("Invalid syntax: " + getSyntax());
+            player.sendMessage(
+                ChatColor.RED + "Invalid syntax use: " + getSyntax()
+            );
             return;
-        }
-        try {
-            Biome biome = Biome.valueOf(args[1].toUpperCase());
-            int islandId = Skyrama
-                .getGridManager()
-                .getIdFromLocation(player.getLocation());
-            List<IslandUser> islandUsers = IslandUser.getPlayersForIsland(
-                islandId
-            );
-            islandUsers.removeIf(i ->
-                !Objects.equals(i.username, player.getName()) ||
-                i.rank == Rank.INVITED
-            );
-            if (islandUsers.size() > 0) {
-                Island island = Island.getIsland(islandId);
-                island.biome = biome;
-                island.save();
-                Skyrama
-                    .getSchematicManager()
-                    .setRegionBiome(player.getName(), islandId, biome);
-                player.sendMessage(
-                    ChatColor.GREEN +
-                    "Successfully changed island biome to: " +
-                    args[1]
+        } else if (args.length == 2) {
+            try {
+                Biome biome = Biome.valueOf(args[1].toUpperCase());
+                int islandId = Skyrama
+                    .getGridManager()
+                    .getIdFromLocation(player.getLocation());
+                List<IslandUser> islandUsers = IslandUser.getPlayersForIsland(
+                    islandId
                 );
-                player.sendMessage(ChatColor.GREEN + "Relog to see changes");
-            } else {
-                player.sendMessage(ChatColor.RED + "You don't own an island");
+                islandUsers.removeIf(i ->
+                    !Objects.equals(i.username, player.getName()) ||
+                    i.rank == Rank.INVITED
+                );
+                if (islandUsers.size() > 0) {
+                    Skyrama
+                        .getSchematicManager()
+                        .setRegionBiome(player.getName(), islandId, biome);
+                    player.sendMessage(
+                        ChatColor.GREEN +
+                        "Successfully changed island biome to: " +
+                        args[1]
+                    );
+                    player.sendMessage(
+                        ChatColor.GREEN + "Relog to see changes"
+                    );
+                } else {
+                    player.sendMessage(
+                        ChatColor.RED + "You don't own an island"
+                    );
+                }
+            } catch (Exception e) {
+                player.sendMessage(ChatColor.RED + "No such biome: " + args[1]);
             }
-        } catch (Exception e) {
-            player.sendMessage(ChatColor.RED + "No such biome: " + args[1]);
         }
     }
 }

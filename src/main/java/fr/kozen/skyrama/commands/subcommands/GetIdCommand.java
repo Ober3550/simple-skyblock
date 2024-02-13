@@ -2,8 +2,7 @@ package fr.kozen.skyrama.commands.subcommands;
 
 import fr.kozen.skyrama.Skyrama;
 import fr.kozen.skyrama.interfaces.ISubCommand;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -11,7 +10,7 @@ public class GetIdCommand implements ISubCommand {
 
     @Override
     public String getName() {
-        return "getId";
+        return "id";
     }
 
     @Override
@@ -21,7 +20,7 @@ public class GetIdCommand implements ISubCommand {
 
     @Override
     public String getSyntax() {
-        return "/is getId";
+        return "/is id";
     }
 
     @Override

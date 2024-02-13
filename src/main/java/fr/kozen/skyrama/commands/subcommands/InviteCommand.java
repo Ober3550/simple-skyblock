@@ -5,8 +5,7 @@ import fr.kozen.skyrama.interfaces.ISubCommand;
 import fr.kozen.skyrama.objects.islands.Island;
 import fr.kozen.skyrama.objects.islands.IslandUser;
 import fr.kozen.skyrama.types.Rank;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.Objects;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -28,7 +27,7 @@ public class InviteCommand implements ISubCommand {
 
     @Override
     public String getSyntax() {
-        return "/is invite <add|accept|deny>";
+        return "/is invite <add/accept/deny>";
     }
 
     @Override
@@ -40,8 +39,7 @@ public class InviteCommand implements ISubCommand {
     public void perform(Player player, String[] args) {
         if (args.length < 3) {
             player.sendMessage(
-                ChatColor.RED +
-                "Invalid syntax: /is invite <add | accept> <player>"
+                ChatColor.RED + "Invalid syntax use: " + getSyntax()
             );
             return;
         }
@@ -73,14 +71,12 @@ public class InviteCommand implements ISubCommand {
                 player.sendMessage(
                     ChatColor.RED +
                     target.getName() +
-                    " has already been invited or is already part of the island"
+                    " has already been invited or is already a member of the island"
                 );
                 return;
             }
             target.sendMessage(
-                ChatColor.GRAY +
-                player.getName() +
-                " invited you to play on their island! "
+                player.getName() + " invited you to play on their island!"
             );
             TextComponent messageYes = new TextComponent(
                 ChatColor.GREEN + "[ACCEPT] "
@@ -107,9 +103,7 @@ public class InviteCommand implements ISubCommand {
                 Rank.INVITED
             );
             invite.create();
-            player.sendMessage(
-                ChatColor.GRAY + "Sent invite to: " + target.getName()
-            );
+            player.sendMessage("Sent invite to: " + target.getName());
             messageYes.addExtra(messageNo);
             target.spigot().sendMessage(messageYes);
         } else if ("accept".equals(args[1])) {

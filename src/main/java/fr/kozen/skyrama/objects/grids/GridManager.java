@@ -105,4 +105,9 @@ public class GridManager {
         }
         return 0;
     }
+
+    public boolean playerIsOnIsland(Player player, int islandId) {
+        int playerId = getIdFromLocation(player.getLocation());
+        return playerId == islandId;
+    }
 }

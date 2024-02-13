@@ -4,9 +4,8 @@ import fr.kozen.skyrama.Skyrama;
 import fr.kozen.skyrama.interfaces.ISubCommand;
 import fr.kozen.skyrama.objects.islands.Island;
 import fr.kozen.skyrama.objects.islands.IslandUser;
-import java.util.Arrays;
-import java.util.List;
-import org.bukkit.block.Biome;
+import java.text.DecimalFormat;
+import java.util.*;
 import org.bukkit.entity.Player;
 
 public class InfoCommand implements ISubCommand {
@@ -43,38 +42,33 @@ public class InfoCommand implements ISubCommand {
             List<IslandUser> islandList = IslandUser.getPlayersForIsland(
                 islandId
             );
-            player.sendMessage("Info for island: " + islandId);
+            DecimalFormat decimals = new DecimalFormat("0.##");
+            player.sendMessage("Island Id: " + islandId);
             player.sendMessage(
-                "Centered on: " +
-                island.center.getX() +
+                "Center: " +
+                decimals.format(island.center.getX()) +
                 "x " +
-                island.center.getY() +
+                decimals.format(island.center.getY()) +
                 "y " +
-                island.center.getZ() +
+                decimals.format(island.center.getZ()) +
                 "z"
             );
             player.sendMessage(
-                "Home on: " +
-                island.spawn.getX() +
+                "Home: " +
+                decimals.format(island.spawn.getX()) +
                 "x " +
-                island.spawn.getY() +
+                decimals.format(island.spawn.getY()) +
                 "y " +
-                island.spawn.getZ() +
+                decimals.format(island.spawn.getZ()) +
                 "z"
             );
-            player.sendMessage("Biome: " + String.valueOf(island.biome));
             player.sendMessage(
-                "Allow Visitors: " +
-                (island.allowVisitors ? "enabled" : "disabled")
+                "Visitors: " + (island.allowVisitors ? "enabled" : "disabled")
             );
+            player.sendMessage("Members:");
             for (IslandUser islandUser : islandList) {
                 player.sendMessage(
-                    "User: " +
-                    islandUser.username +
-                    " Island: " +
-                    islandUser.islandId +
-                    " Rank: " +
-                    islandUser.rank
+                    islandUser.username + " Rank: " + islandUser.rank
                 );
             }
         }

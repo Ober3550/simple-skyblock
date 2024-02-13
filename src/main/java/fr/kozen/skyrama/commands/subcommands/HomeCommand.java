@@ -47,7 +47,12 @@ public class HomeCommand implements ISubCommand {
         if (islandUsers.size() > 1) {
             islandUsers.removeIf(i -> i.rank != Rank.OWNER);
         }
-        if (islandUsers.size() > 1) {
+        if (islandUsers.size() == 0) {
+            player.sendMessage(ChatColor.RED + "You don't own an island");
+        } else if (islandUsers.size() == 1) {
+            Island island = Island.getIsland(islandUsers.get(0).islandId);
+            player.teleport(island.spawn);
+        } else if (islandUsers.size() > 1) {
             if (args.length > 1) {
                 int islandId = Integer.parseInt(args[1]);
                 islandUsers.removeIf(i -> i.islandId != islandId);
@@ -66,10 +71,6 @@ public class HomeCommand implements ISubCommand {
                     player.sendMessage("Island: " + island.islandId);
                 }
             }
-        }
-        if (islandUsers.size() == 1) {
-            Island island = Island.getIsland(islandUsers.get(0).islandId);
-            player.teleport(island.spawn);
         }
     }
 }

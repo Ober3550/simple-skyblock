@@ -5,8 +5,7 @@ import fr.kozen.skyrama.interfaces.ISubCommand;
 import fr.kozen.skyrama.objects.islands.Island;
 import fr.kozen.skyrama.objects.islands.IslandUser;
 import fr.kozen.skyrama.types.Rank;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -19,12 +18,12 @@ public class AllowVisitorsCommand implements ISubCommand {
 
     @Override
     public String getDescription() {
-        return "Sets whether people are allowed to tp to your island";
+        return "Sets whether people are allowed to visit";
     }
 
     @Override
     public String getSyntax() {
-        return "/is visitors <enabled|disabled>";
+        return "/is visitors <enabled/disabled>";
     }
 
     @Override
@@ -37,7 +36,12 @@ public class AllowVisitorsCommand implements ISubCommand {
         List<IslandUser> islandUsers = IslandUser.getIslandsForPlayer(
             player.getName()
         );
-        if (args.length > 1) {
+        if (args.length == 1) {
+            player.sendMessage(
+                ChatColor.RED + "Invalid syntax use: " + getSyntax()
+            );
+            return;
+        } else if (args.length > 1) {
             if (islandUsers.size() == 1) {
                 boolean allowVisitors = true;
                 if ("enabled".equals(args[1])) {

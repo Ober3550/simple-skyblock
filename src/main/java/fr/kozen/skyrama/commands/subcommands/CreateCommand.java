@@ -5,8 +5,7 @@ import fr.kozen.skyrama.interfaces.ISubCommand;
 import fr.kozen.skyrama.objects.islands.Island;
 import fr.kozen.skyrama.objects.islands.IslandUser;
 import fr.kozen.skyrama.types.Rank;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -48,7 +47,7 @@ public class CreateCommand implements ISubCommand {
                 } else {
                     player.sendMessage(
                         ChatColor.RED +
-                        "Island id: " +
+                        "Island Id: " +
                         islandId +
                         " is not available"
                     );

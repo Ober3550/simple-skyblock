@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
 public class Island {
@@ -17,20 +16,17 @@ public class Island {
     public int id;
     public Location center;
     public Location spawn;
-    public Biome biome;
     public boolean allowVisitors;
 
     public Island(
         int id,
         Location center,
         Location spawn,
-        Biome biome,
         boolean allowVisitors
     ) {
         this.id = id;
         this.center = center;
         this.spawn = spawn;
-        this.biome = biome;
         this.allowVisitors = allowVisitors;
     }
 
@@ -48,7 +44,6 @@ public class Island {
                 "  `spawn_z` float NOT NULL DEFAULT '0'," +
                 "  `spawn_yaw` float NOT NULL DEFAULT '0'," +
                 "  `spawn_pitch` float NOT NULL DEFAULT '0'," +
-                "  `biome` varchar(255) NOT NULL DEFAULT 'TAIGA'," +
                 "  `allow_visitors` char(1) DEFAULT 'T'," +
                 "PRIMARY KEY (id)" +
                 ")"
@@ -166,21 +161,19 @@ public class Island {
                 "spawn_z = ?, " +
                 "spawn_yaw = ?, " +
                 "spawn_pitch = ?, " +
-                "biome = ?, " +
                 "allow_visitors = ? " +
                 "WHERE id = ?;"
             );
-            stmt.setFloat(1, this.center.getBlockX());
-            stmt.setFloat(2, this.center.getBlockY());
-            stmt.setFloat(3, this.center.getBlockZ());
-            stmt.setFloat(4, this.spawn.getBlockX());
-            stmt.setFloat(5, this.spawn.getBlockY());
-            stmt.setFloat(6, this.spawn.getBlockZ());
+            stmt.setFloat(1, (float) this.center.getX());
+            stmt.setFloat(2, (float) this.center.getY());
+            stmt.setFloat(3, (float) this.center.getZ());
+            stmt.setFloat(4, (float) this.spawn.getX());
+            stmt.setFloat(5, (float) this.spawn.getY());
+            stmt.setFloat(6, (float) this.spawn.getZ());
             stmt.setFloat(7, this.spawn.getYaw());
             stmt.setFloat(8, this.spawn.getPitch());
-            stmt.setString(9, String.valueOf(this.biome));
-            stmt.setString(10, this.allowVisitors ? "T" : "F");
-            stmt.setInt(11, this.id);
+            stmt.setString(9, this.allowVisitors ? "T" : "F");
+            stmt.setInt(10, this.id);
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -218,19 +211,12 @@ public class Island {
                     resultSet.getFloat("spawn_yaw"),
                     resultSet.getFloat("spawn_pitch")
                 );
-                Biome biome = Biome.valueOf(resultSet.getString("biome"));
                 boolean allowVisitors = "T".equals(
                             resultSet.getString("allow_visitors")
                         )
                     ? true
                     : false;
-                return new Island(
-                    islandId,
-                    center,
-                    spawn,
-                    biome,
-                    allowVisitors
-                );
+                return new Island(islandId, center, spawn, allowVisitors);
             }
         } catch (SQLException e) {
             Bukkit.getLogger().info("Something went wrong. " + e);

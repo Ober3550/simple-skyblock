@@ -7,6 +7,7 @@ import java.util.*;
 import javax.annotation.Nullable;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,6 +20,9 @@ public class CommandManager implements CommandExecutor {
 
     public CommandManager() {
         subcommands.add(new SpawnCommand());
+        subcommands.add(new GetIdCommand());
+        subcommands.add(new InfoCommand());
+        subcommands.add(new ListCommand());
 
         subcommands.add(new CreateCommand());
         subcommands.add(new DeleteCommand());
@@ -27,17 +31,14 @@ public class CommandManager implements CommandExecutor {
         subcommands.add(new SetHomeCommand());
         subcommands.add(new SetBiomeCommand());
 
-        subcommands.add(new VisitCommand());
         subcommands.add(new AllowVisitorsCommand());
+        subcommands.add(new VisitCommand());
+        subcommands.add(new KickCommand());
 
         subcommands.add(new InviteCommand());
         subcommands.add(new LeaveCommand());
         subcommands.add(new RemoveCommand());
-        subcommands.add(new ListCommand());
-        subcommands.add(new InfoCommand());
-
         // subcommands.add(new DropCommand());
-        subcommands.add(new GetIdCommand());
         this.initTabCompleter();
     }
 
@@ -55,15 +56,21 @@ public class CommandManager implements CommandExecutor {
                 }
             }
         } else if (args.length == 0) {
-            sender.sendMessage("--------------------------------");
+            sender.sendMessage(
+                ChatColor.YELLOW + "--------------------------------"
+            );
             for (int i = 0; i < subcommands.size(); i++) {
                 sender.sendMessage(
+                    ChatColor.GOLD +
                     subcommands.get(i).getSyntax() +
-                    " - " +
+                    ": " +
+                    ChatColor.WHITE +
                     subcommands.get(i).getDescription()
                 );
             }
-            sender.sendMessage("--------------------------------");
+            sender.sendMessage(
+                ChatColor.YELLOW + "--------------------------------"
+            );
         }
         return true;
     }

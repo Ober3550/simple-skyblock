@@ -23,18 +23,19 @@ This plugin was originally made for `Spigot 1.19` but you can totally edit it to
 
 ## Commands
 
-| Command                           | Description                               |
-| --------------------------------- | ----------------------------------------- |
-| `/is` or `/island`                | Show the help menu with all the commands. |
-| `/is create <optional islandId>`                      | Create an island plot in a spiral from spawn. Specify id to create plots beside friends |
-| `/is delete`                      | Delete your island.                         |
-| `/is home <optional islandId>`                        | Teleport user to owner or member island.        |
-| `/is sethome`                    | Change the island home to current player position. |
-| `/is setbiome <biome>`                        | Sets the biome of the island.        |
-| `/is visitors <enabled/disabled>`         | Set whether island is open to visitors.  |
-| `/is visit <Player>`         | Teleport to the specified player island.  |
-| `/is invite add <Player>`    | Invite player to be island member. |
-| `/is invite accept <Player>` | Accept the player invitation.             |
-| `/is invite decline <Player>`   | Decline the player invitation.            |
-| `/is leave <islandId>`   | Leave island membership. |
-| `/is remove <Player>`   | Remove player membership. |
+| Command                           | Description                                                                             |
+| --------------------------------- | --------------------------------------------------------------------------------------- |
+| `/is` or `/island`                | Show the help menu with all the commands.                                               |
+| `/is create <optional islandId>`  | Create an island plot in a spiral from spawn. Specify id to create plots beside friends |
+| `/is delete`                      | Delete your island.                                                                     |
+| `/is home <optional islandId>`    | Teleport user to owner or member island.                                                |
+| `/is sethome`                     | Change the island home to current player position.                                      |
+| `/is setbiome <biome>`            | Sets the biome of the island.                                                           |
+| `/is visitors <enabled/disabled>` | Set whether island is open to visitors.                                                 |
+| `/is visit <Player>`              | Teleport to the specified player island.                                                |
+| `/is kick <Player>`               | Kick a player from your island.                                                         |
+| `/is invite add <Player>`         | Invite player to be island member.                                                      |
+| `/is invite accept <Player>`      | Accept the player invitation.                                                           |
+| `/is invite decline <Player>`     | Decline the player invitation.                                                          |
+| `/is leave <islandId>`            | Leave island membership.                                                                |
+| `/is remove <Player>`             | Remove player membership.                                                               |

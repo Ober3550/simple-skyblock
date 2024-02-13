@@ -5,8 +5,8 @@ import fr.kozen.skyrama.interfaces.ISubCommand;
 import fr.kozen.skyrama.objects.islands.Island;
 import fr.kozen.skyrama.objects.islands.IslandUser;
 import fr.kozen.skyrama.types.Rank;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -39,6 +39,7 @@ public class LeaveCommand implements ISubCommand {
         );
         if (islands.size() == 1) {
             IslandUser islandUser = islands.get(0);
+            int islandId = islandUser.islandId;
             if (islandUser.rank == Rank.OWNER) {
                 player.sendMessage(
                     ChatColor.RED + "Island owners cannot leave. Use /is delete"
@@ -48,6 +49,11 @@ public class LeaveCommand implements ISubCommand {
                 player.sendMessage(
                     ChatColor.GREEN + "Successfully left island"
                 );
+                if (
+                    Skyrama.getGridManager().playerIsOnIsland(player, islandId)
+                ) {
+                    Bukkit.getServer().dispatchCommand(player, "is spawn");
+                }
             }
         } else if (islands.size() > 1) {
             islands.removeIf(i -> i.rank == Rank.OWNER);
@@ -59,16 +65,15 @@ public class LeaveCommand implements ISubCommand {
                 } else {
                     player.sendMessage(
                         ChatColor.RED +
-                        "You are not part of island: " +
+                        "You are not member of island: " +
                         islandId
                     );
                 }
             } else {
+                player.sendMessage("You are a member of the following:");
                 for (IslandUser islandUser : islands) {
                     player.sendMessage(
-                        "User: " +
-                        islandUser.username +
-                        " Island: " +
+                        "Island: " +
                         islandUser.islandId +
                         " Rank: " +
                         islandUser.rank
@@ -76,7 +81,9 @@ public class LeaveCommand implements ISubCommand {
                 }
             }
         } else {
-            player.sendMessage(ChatColor.RED + "You aren't part of an island");
+            player.sendMessage(
+                ChatColor.RED + "You are not a member of an island"
+            );
         }
     }
 }

@@ -38,10 +38,19 @@ public class VisitCommand implements ISubCommand {
 
     @Override
     public void perform(Player player, String[] args) {
-        if (args.length > 1) {
+        if (args.length == 1) {
+            player.sendMessage(
+                ChatColor.RED + "Invalid syntax use: " + getSyntax()
+            );
+            return;
+        } else if (args.length > 1) {
             String username = args[1];
             List<IslandUser> islands = IslandUser.getIslandsForPlayer(username);
-            if (islands.size() == 1) {
+            if (islands.size() == 0) {
+                player.sendMessage(
+                    ChatColor.RED + "Player does not own an island"
+                );
+            } else if (islands.size() == 1) {
                 Island island = Island.getIsland(islands.get(0).islandId);
                 if (island.allowVisitors) {
                     player.teleport(island.spawn);
@@ -53,8 +62,10 @@ public class VisitCommand implements ISubCommand {
                     );
                 }
             } else {
+                // TODO implement visiting a player that owns multiple islands
                 player.sendMessage(
-                    "Player owns more than one island. Specify which to visit"
+                    ChatColor.RED +
+                    "Visiting a player that owns multiple islands is not yet implemented"
                 );
             }
         }
