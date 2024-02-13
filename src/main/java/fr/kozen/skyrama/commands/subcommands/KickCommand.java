@@ -58,6 +58,10 @@ public class KickCommand implements ISubCommand {
             int islandId = islandUser.islandId;
             if (Skyrama.getGridManager().playerIsOnIsland(target, islandId)) {
                 Bukkit.getServer().dispatchCommand(target, "is spawn");
+            } else {
+                player.sendMessage(
+                    ChatColor.RED + "They are not on your island"
+                );
             }
         } else {
             player.sendMessage(ChatColor.RED + "You don't own an island");

@@ -19,25 +19,23 @@ public class CommandManager implements CommandExecutor {
     public final List<ISubCommand> subcommands = new ArrayList<>();
 
     public CommandManager() {
-        subcommands.add(new SpawnCommand());
-        subcommands.add(new GetIdCommand());
-        subcommands.add(new InfoCommand());
-        subcommands.add(new ListCommand());
-
-        subcommands.add(new CreateCommand());
         subcommands.add(new DeleteCommand());
+        subcommands.add(new ListCommand());
+        subcommands.add(new GetIdCommand());
 
-        subcommands.add(new HomeCommand());
-        subcommands.add(new SetHomeCommand());
-        subcommands.add(new SetBiomeCommand());
-
-        subcommands.add(new AllowVisitorsCommand());
-        subcommands.add(new VisitCommand());
-        subcommands.add(new KickCommand());
-
-        subcommands.add(new InviteCommand());
         subcommands.add(new LeaveCommand());
         subcommands.add(new RemoveCommand());
+        subcommands.add(new AllowVisitorsCommand());
+        subcommands.add(new InviteCommand());
+
+        subcommands.add(new InfoCommand());
+        subcommands.add(new KickCommand());
+        subcommands.add(new VisitCommand());
+        subcommands.add(new SetBiomeCommand());
+        subcommands.add(new SetHomeCommand());
+        subcommands.add(new HomeCommand());
+        subcommands.add(new CreateCommand());
+        subcommands.add(new SpawnCommand());
         // subcommands.add(new DropCommand());
         this.initTabCompleter();
     }
