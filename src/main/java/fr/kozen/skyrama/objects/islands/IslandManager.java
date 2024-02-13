@@ -17,6 +17,20 @@ public class IslandManager {
 
     public IslandManager() {}
 
+    public static Location getConfigLocation(String locationPath) {
+        FileConfiguration config = Skyrama.getPlugin(Skyrama.class).getConfig();
+        World world = Bukkit.getWorld(config.getString("general.world"));
+        int x = 0;
+        int y = 0;
+        int z = 0;
+        try {
+            x = Integer.parseInt(config.getString(locationPath + ".X"));
+            y = Integer.parseInt(config.getString(locationPath + ".Y"));
+            z = Integer.parseInt(config.getString(locationPath + ".Z"));
+        } catch (Exception e) {}
+        return new Location(world, x, y, z);
+    }
+
     public void createIsland(Player owner, int islandId) {
         if (islandId > 0) {
             FileConfiguration config = Skyrama
@@ -41,12 +55,12 @@ public class IslandManager {
                 center.getY() + verticalOffset,
                 center.getZ() - 1.5
             );
-
+            Location schematicOffset = getConfigLocation("island.offset");
             Location schematicLocation = new Location(
                 world,
-                center.getX(),
-                center.getY() + verticalOffset,
-                center.getZ()
+                center.getX() + schematicOffset.getBlockX(),
+                center.getY() + schematicOffset.getBlockY() + verticalOffset,
+                center.getZ() + schematicOffset.getBlockZ()
             );
 
             Island island = new Island(islandId, center, spawn, true);

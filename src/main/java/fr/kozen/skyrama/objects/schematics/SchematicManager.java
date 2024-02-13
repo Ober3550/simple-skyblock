@@ -44,67 +44,32 @@ public class SchematicManager {
     }
 
     public void createIsland(Player player, Location location) {
-        try {
-            String sep = File.separator;
-            String filepath =
-                Skyrama.getPlugin(Skyrama.class).getDataFolder() +
-                sep +
-                "schematics" +
-                sep +
-                "island.schem";
-            File file = new File(filepath);
-            Bukkit.getLogger().info("Loading schematic from: " + filepath);
-            if (file.exists()) {
-                ClipboardFormat format = ClipboardFormats.findByAlias("schem");
-                ClipboardReader reader = format.getReader(
-                    Files.newInputStream(file.toPath())
-                );
-                Clipboard clipboard = reader.read();
-                player.sendMessage(ChatColor.GREEN + "Loaded island schematic");
-                try {
-                    EditSession editSession = WorldEdit
-                        .getInstance()
-                        .getEditSessionFactory()
-                        .getEditSession(
-                            BukkitAdapter.adapt(player.getWorld()),
-                            -1
-                        );
-                    Operation operation = new ClipboardHolder(clipboard)
-                        .createPaste(editSession)
-                        .to(
-                            BlockVector3.at(
-                                location.getBlockX(),
-                                location.getBlockY(),
-                                location.getBlockZ()
-                            )
-                        )
-                        .ignoreAirBlocks(false)
-                        .build();
-                    Operations.complete(operation);
-                    player.sendMessage(
-                        ChatColor.GREEN +
-                        "Placed island at: " +
-                        location.getBlockX() +
-                        "x " +
-                        location.getBlockY() +
-                        "y " +
-                        location.getBlockZ() +
-                        "z"
-                    );
-                } catch (WorldEditException e) {
-                    player.sendMessage(
-                        ChatColor.RED + "Failed to place island schematic"
-                    );
-                    e.printStackTrace();
-                }
-            } else {
-                player.sendMessage(
-                    ChatColor.RED + "Failed to load island schematic"
-                );
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        FileConfiguration config = Skyrama.getPlugin(Skyrama.class).getConfig();
+        String worldString = config.getString("general.world");
+        Bukkit
+            .getServer()
+            .dispatchCommand(
+                Bukkit.getConsoleSender(),
+                "/world " + worldString
+            );
+        Bukkit
+            .getServer()
+            .dispatchCommand(
+                Bukkit.getConsoleSender(),
+                "/pos1 " +
+                location.getBlockX() +
+                "," +
+                location.getBlockY() +
+                "," +
+                location.getBlockZ()
+            );
+        Bukkit
+            .getServer()
+            .dispatchCommand(
+                Bukkit.getConsoleSender(),
+                "/schematic load island"
+            );
+        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "/paste");
     }
 
     public void selectRegion(String username, int islandId) {
