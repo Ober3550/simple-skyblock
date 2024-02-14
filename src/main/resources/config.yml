@@ -35,6 +35,6 @@ island:
     respawnIsland: true
 
     offset:
-        X: -3
-        Y: 7
-        Z: -3
+        X: 0
+        Y: 0
+        Z: 0

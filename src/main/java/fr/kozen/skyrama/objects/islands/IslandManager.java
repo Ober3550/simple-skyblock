@@ -31,7 +31,7 @@ public class IslandManager {
         return new Location(world, x, y, z);
     }
 
-    public void createIsland(Player owner, int islandId) {
+    public void createIsland(Player player, int islandId) {
         if (islandId > 0) {
             FileConfiguration config = Skyrama
                 .getPlugin(Skyrama.class)
@@ -56,32 +56,40 @@ public class IslandManager {
                 center.getZ() - 1.5
             );
             Location schematicOffset = getConfigLocation("island.offset");
+            Bukkit
+                .getLogger()
+                .info(
+                    "Ofsetting schematic by: " +
+                    schematicOffset.getBlockX() +
+                    "x " +
+                    (schematicOffset.getBlockY() + verticalOffset) +
+                    "y " +
+                    schematicOffset.getBlockZ() +
+                    "z"
+                );
             Location schematicLocation = new Location(
                 world,
-                center.getX() + schematicOffset.getBlockX(),
+                center.getX() + schematicOffset.getBlockX() + 1,
                 center.getY() + schematicOffset.getBlockY() + verticalOffset,
-                center.getZ() + schematicOffset.getBlockZ()
+                center.getZ() + schematicOffset.getBlockZ() - 2
             );
-
+            Skyrama
+                .getSchematicManager()
+                .createIsland(player, schematicLocation);
             Island island = new Island(islandId, center, spawn, true);
             Island.create(islandId);
             island.save();
             IslandUser islandUser = new IslandUser(
-                owner.getName(),
+                player.getName(),
                 islandId,
                 Rank.OWNER
             );
             islandUser.create();
-
             Skyrama
                 .getSchematicManager()
-                .createIsland(owner, schematicLocation);
-
-            Skyrama
-                .getSchematicManager()
-                .claimRegion(owner.getName(), islandId);
-            owner.getPlayer().teleport(spawn);
-            owner.sendMessage(ChatColor.GREEN + "Created island: " + islandId);
+                .claimRegion(player.getName(), islandId);
+            player.sendMessage(ChatColor.GREEN + "Created island: " + islandId);
+            Bukkit.getServer().dispatchCommand(player, "is home");
         }
     }
 }
