@@ -38,33 +38,41 @@ public class KickCommand implements ISubCommand {
 
     @Override
     public void perform(Player player, String[] args) {
-        if (args.length != 2) {
-            player.sendMessage(
-                ChatColor.RED + "Invalid syntax use: " + getSyntax()
-            );
-            return;
-        }
-        Player target = Bukkit.getPlayer(args[1]);
-        if (target == null) {
-            player.sendMessage("Could not find player: " + args[1]);
-            return;
-        }
-        List<IslandUser> islandUsers = IslandUser.getIslandsForPlayer(
-            player.getName()
-        );
-        islandUsers.removeIf(i -> i.rank != Rank.OWNER);
-        if (islandUsers.size() > 0) {
-            IslandUser islandUser = islandUsers.get(0);
-            int islandId = islandUser.islandId;
-            if (Skyrama.getGridManager().playerIsOnIsland(target, islandId)) {
-                Bukkit.getServer().dispatchCommand(target, "is spawn");
-            } else {
+        try {
+            if (args.length != 2) {
                 player.sendMessage(
-                    ChatColor.RED + "They are not on your island"
+                    ChatColor.RED + "Invalid syntax use: " + getSyntax()
                 );
+                return;
             }
-        } else {
-            player.sendMessage(ChatColor.RED + "You don't own an island");
+            Player target = Bukkit.getPlayer(args[1]);
+            if (target == null) {
+                player.sendMessage("Could not find player: " + args[1]);
+                return;
+            }
+            List<IslandUser> islandUsers = IslandUser.getIslandsForPlayer(
+                player.getName()
+            );
+            islandUsers.removeIf(i -> i.rank != Rank.OWNER);
+            if (islandUsers.size() > 0) {
+                IslandUser islandUser = islandUsers.get(0);
+                int islandId = islandUser.islandId;
+                if (
+                    Skyrama.getGridManager().playerIsOnIsland(target, islandId)
+                ) {
+                    Bukkit.getServer().dispatchCommand(target, "is spawn");
+                } else {
+                    player.sendMessage(
+                        ChatColor.RED + "They are not on your island"
+                    );
+                }
+            } else {
+                player.sendMessage(ChatColor.RED + "You don't own an island");
+            }
+        } catch (Exception e) {
+            String msg = "Failed to kick player from island:" + e;
+            player.sendMessage(ChatColor.RED + msg);
+            Bukkit.getLogger().info(msg);
         }
     }
 }

@@ -5,6 +5,8 @@ import fr.kozen.skyrama.interfaces.ISubCommand;
 import fr.kozen.skyrama.objects.islands.Island;
 import fr.kozen.skyrama.objects.islands.IslandUser;
 import java.util.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class DropCommand implements ISubCommand {
@@ -31,13 +33,18 @@ public class DropCommand implements ISubCommand {
 
     @Override
     public void perform(Player player, String[] args) {
-        if (player.isOp()) {
-            Island.dropTable();
-            Island.createTable();
-            IslandUser.dropTable();
-            IslandUser.createTable();
-
-            player.sendMessage("Dumped and reconstructed tables");
+        try {
+            if (player.isOp()) {
+                Island.dropTable();
+                Island.createTable();
+                IslandUser.dropTable();
+                IslandUser.createTable();
+                player.sendMessage("Dumped and reconstructed tables");
+            }
+        } catch (Exception e) {
+            String msg = "Failed to reconstruct database tables:" + e;
+            player.sendMessage(ChatColor.RED + msg);
+            Bukkit.getLogger().info(msg);
         }
     }
 }

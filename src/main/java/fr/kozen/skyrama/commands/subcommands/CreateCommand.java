@@ -6,6 +6,7 @@ import fr.kozen.skyrama.objects.islands.Island;
 import fr.kozen.skyrama.objects.islands.IslandUser;
 import fr.kozen.skyrama.types.Rank;
 import java.util.*;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -33,35 +34,46 @@ public class CreateCommand implements ISubCommand {
 
     @Override
     public void perform(Player player, String[] args) {
-        List<IslandUser> islandUsers = IslandUser.getIslandsForPlayer(
-            player.getName()
-        );
-        islandUsers.removeIf(i -> i.rank != Rank.OWNER);
-        // Check if user already owns an island
-        if (islandUsers.size() == 0 || player.isOp()) {
-            int islandId = 0;
-            if (args.length > 1) {
-                islandId = Integer.parseInt(args[1]);
-                if (Island.availableIslandId(islandId)) {
-                    Skyrama.getIslandManager().createIsland(player, islandId);
+        try {
+            List<IslandUser> islandUsers = IslandUser.getIslandsForPlayer(
+                player.getName()
+            );
+            islandUsers.removeIf(i -> i.rank != Rank.OWNER);
+            // Check if user already owns an island
+            if (islandUsers.size() == 0 || player.isOp()) {
+                int islandId = 0;
+                if (args.length > 1) {
+                    islandId = Integer.parseInt(args[1]);
+                    if (Island.availableIslandId(islandId)) {
+                        Skyrama
+                            .getIslandManager()
+                            .createIsland(player, islandId);
+                    } else {
+                        player.sendMessage(
+                            ChatColor.RED +
+                            "Island Id: " +
+                            islandId +
+                            " is not available"
+                        );
+                    }
                 } else {
-                    player.sendMessage(
-                        ChatColor.RED +
-                        "Island Id: " +
-                        islandId +
-                        " is not available"
-                    );
+                    islandId = Island.getNextId();
+                    Skyrama.getIslandManager().createIsland(player, islandId);
+                    Bukkit
+                        .getServer()
+                        .dispatchCommand(player, "is home " + islandId);
                 }
             } else {
-                islandId = Island.getNextId();
-                Skyrama.getIslandManager().createIsland(player, islandId);
+                player.sendMessage(
+                    Skyrama
+                        .getLocaleManager()
+                        .getString("player-already-have-island")
+                );
             }
-        } else {
-            player.sendMessage(
-                Skyrama
-                    .getLocaleManager()
-                    .getString("player-already-have-island")
-            );
+        } catch (Exception e) {
+            String msg = "Failed to create island:" + e;
+            player.sendMessage(ChatColor.RED + msg);
+            Bukkit.getLogger().info(msg);
         }
     }
 }

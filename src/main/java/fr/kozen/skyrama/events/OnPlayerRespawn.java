@@ -14,19 +14,26 @@ public class OnPlayerRespawn implements Listener {
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        String username = event.getPlayer().getName();
-        List<IslandUser> islandUsers = IslandUser.getIslandsForPlayer(username);
-        if (islandUsers.size() > 1) {
-            islandUsers.removeIf(i -> i.rank != Rank.OWNER);
-            // If the user is part of multiple islands but not an owner just spawn them at the first one
-            if (islandUsers.size() == 0) {
-                islandUsers = IslandUser.getIslandsForPlayer(username);
+        try {
+            String username = event.getPlayer().getName();
+            List<IslandUser> islandUsers = IslandUser.getIslandsForPlayer(
+                username
+            );
+            if (islandUsers.size() > 1) {
+                islandUsers.removeIf(i -> i.rank != Rank.OWNER);
+                // If the user is part of multiple islands but not an owner just spawn them at the first one
+                if (islandUsers.size() == 0) {
+                    islandUsers = IslandUser.getIslandsForPlayer(username);
+                }
             }
-        }
-        if (islandUsers.size() > 0) {
-            IslandUser islandUser = islandUsers.get(0);
-            Island island = Island.getIsland(islandUser.islandId);
-            event.setRespawnLocation(island.spawn);
+            if (islandUsers.size() > 0) {
+                IslandUser islandUser = islandUsers.get(0);
+                Island island = Island.getIsland(islandUser.islandId);
+                event.setRespawnLocation(island.spawn);
+            }
+        } catch (Exception e) {
+            String msg = "Failed to find island for player to respawn at:" + e;
+            Bukkit.getLogger().info(msg);
         }
     }
 }

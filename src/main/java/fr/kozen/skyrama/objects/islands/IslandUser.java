@@ -24,114 +24,91 @@ public class IslandUser {
         this.rank = rank;
     }
 
-    public static void createTable() {
-        try {
-            Connection conn = Skyrama.getSqlManager().getConnection();
-            PreparedStatement stmt = conn.prepareStatement(
-                "CREATE TABLE IF NOT EXISTS `island_users` (" +
-                "  `id` int(11) NOT NULL AUTO_INCREMENT," +
-                "  `username` varchar(255) NOT NULL," +
-                "  `island_id` int(11) NOT NULL," +
-                "  `rank` int(11) NOT NULL," +
-                "PRIMARY KEY (id)" +
-                ")"
-            );
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            Bukkit.getLogger().info("Something went wrong. " + e);
+    public static void createTable() throws SQLException {
+        Connection conn = Skyrama.getSqlManager().getConnection();
+        PreparedStatement stmt = conn.prepareStatement(
+            "CREATE TABLE IF NOT EXISTS `island_users` (" +
+            "  `id` INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "  `username` text NOT NULL," +
+            "  `island_id` INTEGER NOT NULL," +
+            "  `rank` INTEGER NOT NULL" +
+            ")"
+        );
+        stmt.executeUpdate();
+    }
+
+    public static void dropTable() throws SQLException {
+        Connection conn = Skyrama.getSqlManager().getConnection();
+        PreparedStatement stmt = conn.prepareStatement(
+            "DROP TABLE island_users;"
+        );
+        stmt.executeUpdate();
+    }
+
+    public void create() throws SQLException {
+        Connection conn = Skyrama.getSqlManager().getConnection();
+        PreparedStatement stmt = conn.prepareStatement(
+            "INSERT INTO island_users(`username`, `island_id`, `rank`) VALUES(?, ?, ?);"
+        );
+        stmt.setString(1, this.username);
+        stmt.setInt(2, this.islandId);
+        stmt.setInt(3, this.rank.getValue());
+        stmt.execute();
+        if (this.rank == Rank.MEMBER) {
+            Skyrama
+                .getSchematicManager()
+                .addMemberToRegion(this.username, this.islandId);
         }
     }
 
-    public static void dropTable() {
-        try {
-            Connection conn = Skyrama.getSqlManager().getConnection();
-            PreparedStatement stmt = conn.prepareStatement(
-                "DROP TABLE island_users;"
-            );
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            Bukkit.getLogger().info("Something went wrong. " + e);
+    public void delete() throws SQLException {
+        Connection conn = Skyrama.getSqlManager().getConnection();
+        PreparedStatement stmt = conn.prepareStatement(
+            "DELETE FROM island_users WHERE username = ? AND island_id = ? AND `rank` = ?;"
+        );
+        stmt.setString(1, this.username);
+        stmt.setInt(2, this.islandId);
+        stmt.setInt(3, this.rank.getValue());
+        stmt.execute();
+        if (this.rank == Rank.MEMBER) {
+            Skyrama
+                .getSchematicManager()
+                .removeMemberFromRegion(this.username, this.islandId);
         }
     }
 
-    public void create() {
-        try {
-            Connection conn = Skyrama.getSqlManager().getConnection();
-            PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO island_users(`username`, `island_id`, `rank`) VALUES(?, ?, ?);"
-            );
-            stmt.setString(1, this.username);
-            stmt.setInt(2, this.islandId);
-            stmt.setInt(3, this.rank.getValue());
-            stmt.execute();
-            if (this.rank == Rank.MEMBER) {
-                Skyrama
-                    .getSchematicManager()
-                    .addMemberToRegion(this.username, this.islandId);
-            }
-        } catch (SQLException e) {
-            Bukkit.getLogger().info("Something went wrong. " + e);
-        }
-    }
-
-    public void delete() {
-        try {
-            Connection conn = Skyrama.getSqlManager().getConnection();
-            PreparedStatement stmt = conn.prepareStatement(
-                "DELETE FROM island_users WHERE username = ? AND island_id = ? AND `rank` = ?;"
-            );
-            stmt.setString(1, this.username);
-            stmt.setInt(2, this.islandId);
-            stmt.setInt(3, this.rank.getValue());
-            stmt.execute();
-            if (this.rank == Rank.MEMBER) {
-                Skyrama
-                    .getSchematicManager()
-                    .removeMemberFromRegion(this.username, this.islandId);
-            }
-        } catch (SQLException e) {
-            Bukkit.getLogger().info("Something went wrong. " + e);
-        }
-    }
-
-    public static List<IslandUser> getIslandsForPlayer(String username) {
+    public static List<IslandUser> getIslandsForPlayer(String username)
+        throws SQLException {
         List<IslandUser> islandUsers = new ArrayList<IslandUser>();
-        try {
-            Connection conn = Skyrama.getSqlManager().getConnection();
-            PreparedStatement stmt = conn.prepareStatement(
-                "SELECT * FROM island_users WHERE username = ?"
-            );
-            stmt.setString(1, username);
-            ResultSet resultSet = stmt.executeQuery();
+        Connection conn = Skyrama.getSqlManager().getConnection();
+        PreparedStatement stmt = conn.prepareStatement(
+            "SELECT * FROM island_users WHERE username = ?"
+        );
+        stmt.setString(1, username);
+        ResultSet resultSet = stmt.executeQuery();
 
-            while (resultSet.next()) {
-                int islandId = resultSet.getInt("island_id");
-                Rank rank = Rank.fromInt(resultSet.getInt("rank"));
-                islandUsers.add(new IslandUser(username, islandId, rank));
-            }
-        } catch (SQLException e) {
-            Bukkit.getLogger().info("Something went wrong. " + e);
+        while (resultSet.next()) {
+            int islandId = resultSet.getInt("island_id");
+            Rank rank = Rank.fromInt(resultSet.getInt("rank"));
+            islandUsers.add(new IslandUser(username, islandId, rank));
         }
         return islandUsers;
     }
 
-    public static List<IslandUser> getPlayersForIsland(int islandId) {
+    public static List<IslandUser> getPlayersForIsland(int islandId)
+        throws SQLException {
         List<IslandUser> islandUsers = new ArrayList<IslandUser>();
-        try {
-            Connection conn = Skyrama.getSqlManager().getConnection();
-            PreparedStatement stmt = conn.prepareStatement(
-                "SELECT * FROM island_users WHERE island_id = ?"
-            );
-            stmt.setInt(1, islandId);
-            ResultSet resultSet = stmt.executeQuery();
+        Connection conn = Skyrama.getSqlManager().getConnection();
+        PreparedStatement stmt = conn.prepareStatement(
+            "SELECT * FROM island_users WHERE island_id = ?"
+        );
+        stmt.setInt(1, islandId);
+        ResultSet resultSet = stmt.executeQuery();
 
-            while (resultSet.next()) {
-                String username = resultSet.getString("username");
-                Rank rank = Rank.fromInt(resultSet.getInt("rank"));
-                islandUsers.add(new IslandUser(username, islandId, rank));
-            }
-        } catch (SQLException e) {
-            Bukkit.getLogger().info("Something went wrong. " + e);
+        while (resultSet.next()) {
+            String username = resultSet.getString("username");
+            Rank rank = Rank.fromInt(resultSet.getInt("rank"));
+            islandUsers.add(new IslandUser(username, islandId, rank));
         }
         return islandUsers;
     }

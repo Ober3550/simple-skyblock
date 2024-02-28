@@ -32,64 +32,73 @@ public class IslandManager {
     }
 
     public void createIsland(Player player, int islandId) {
-        if (islandId > 0) {
-            FileConfiguration config = Skyrama
-                .getPlugin(Skyrama.class)
-                .getConfig();
-            int verticalOffset = Integer.parseInt(
-                config.getString("general.spawn.Y")
-            );
-            Location center = Skyrama
-                .getGridManager()
-                .getCenterFromId(islandId);
-
-            World world = Bukkit.getWorld(
-                Skyrama
+        try {
+            if (islandId > 0) {
+                FileConfiguration config = Skyrama
                     .getPlugin(Skyrama.class)
-                    .getConfig()
-                    .getString("general.world")
-            );
-            Location spawn = new Location(
-                world,
-                center.getX() + 1.5,
-                center.getY() + verticalOffset,
-                center.getZ() - 1.5
-            );
-            Location schematicOffset = getConfigLocation("island.offset");
-            Bukkit
-                .getLogger()
-                .info(
-                    "Ofsetting schematic by: " +
-                    schematicOffset.getBlockX() +
-                    "x " +
-                    (schematicOffset.getBlockY() + verticalOffset) +
-                    "y " +
-                    schematicOffset.getBlockZ() +
-                    "z"
+                    .getConfig();
+                int verticalOffset = Integer.parseInt(
+                    config.getString("general.spawn.Y")
                 );
-            Location schematicLocation = new Location(
-                world,
-                center.getX() + schematicOffset.getBlockX() + 1,
-                center.getY() + schematicOffset.getBlockY() + verticalOffset,
-                center.getZ() + schematicOffset.getBlockZ() - 2
-            );
-            Skyrama
-                .getSchematicManager()
-                .createIsland(player, schematicLocation);
-            Island island = new Island(islandId, center, spawn, true);
-            Island.create(islandId);
-            island.save();
-            IslandUser islandUser = new IslandUser(
-                player.getName(),
-                islandId,
-                Rank.OWNER
-            );
-            islandUser.create();
-            Skyrama
-                .getSchematicManager()
-                .claimRegion(player.getName(), islandId);
-            player.sendMessage(ChatColor.GREEN + "Created island: " + islandId);
-            Bukkit.getServer().dispatchCommand(player, "is home");
+                Location center = Skyrama
+                    .getGridManager()
+                    .getCenterFromId(islandId);
+
+                World world = Bukkit.getWorld(
+                    Skyrama
+                        .getPlugin(Skyrama.class)
+                        .getConfig()
+                        .getString("general.world")
+                );
+                Location spawn = new Location(
+                    world,
+                    center.getX() + 1.5,
+                    center.getY() + verticalOffset,
+                    center.getZ() - 1.5
+                );
+                Location schematicOffset = getConfigLocation("island.offset");
+                Bukkit
+                    .getLogger()
+                    .info(
+                        "Ofsetting schematic by: " +
+                        schematicOffset.getBlockX() +
+                        "x " +
+                        (schematicOffset.getBlockY() + verticalOffset) +
+                        "y " +
+                        schematicOffset.getBlockZ() +
+                        "z"
+                    );
+                Location schematicLocation = new Location(
+                    world,
+                    center.getX() + schematicOffset.getBlockX() + 1,
+                    center.getY() +
+                    schematicOffset.getBlockY() +
+                    verticalOffset,
+                    center.getZ() + schematicOffset.getBlockZ() - 2
+                );
+                Skyrama
+                    .getSchematicManager()
+                    .createIsland(player, schematicLocation);
+                Island island = new Island(islandId, center, spawn, true);
+                Island.create(islandId);
+                island.save();
+                IslandUser islandUser = new IslandUser(
+                    player.getName(),
+                    islandId,
+                    Rank.OWNER
+                );
+                islandUser.create();
+                Skyrama
+                    .getSchematicManager()
+                    .claimRegion(player.getName(), islandId);
+                player.sendMessage(
+                    ChatColor.GREEN + "Created island: " + islandId
+                );
+            }
+        } catch (Exception e) {
+            String msg = "Failed to create island:" + e;
+            player.sendMessage(ChatColor.RED + msg);
+            Bukkit.getLogger().info(msg);
         }
     }
 }

@@ -3,10 +3,13 @@ package fr.kozen.skyrama;
 import fr.kozen.skyrama.commands.CommandManager;
 import fr.kozen.skyrama.events.*;
 import fr.kozen.skyrama.objects.grids.GridManager;
+import fr.kozen.skyrama.objects.islands.Island;
 import fr.kozen.skyrama.objects.islands.IslandManager;
+import fr.kozen.skyrama.objects.islands.IslandUser;
 import fr.kozen.skyrama.objects.locales.LocaleManager;
 import fr.kozen.skyrama.objects.schematics.SchematicManager;
 import fr.kozen.skyrama.storage.SqlManager;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Skyrama extends JavaPlugin {
@@ -50,8 +53,12 @@ public final class Skyrama extends JavaPlugin {
         islandManager = new IslandManager();
         schematicManager = new SchematicManager();
         localeManager = new LocaleManager();
-
-        sqlManager.populate();
+        try {
+            Island.createTable();
+            IslandUser.createTable();
+        } catch (Exception e) {
+            Bukkit.getLogger().info("Failed to create database tables:" + e);
+        }
     }
 
     public void initEvents() {
