@@ -28,6 +28,8 @@ public class SqlManager {
 
     @Override
     protected void finalize() {
-        conn.close()
+        try {
+            conn.close();
+        } catch (Exception e) {}
     }
 }
